@@ -1,0 +1,17 @@
+export enum ENUM_TRANSACTION_ORDER_TYPE {
+  deposit = "Deposit",
+  manualTransfer = "ManualTransfer",
+  withdrawPrepare = "WithdrawPrepare",
+  withdrawComplete = "WithdrawComplete",
+  withdrawRollback = "WithdrawRollback",
+  investmentOwnerDeposit = "InvestmentOwnerDeposit",
+  tradingSpotPlaceOrder = "TradingSpotPlaceOrder",
+  tradingSpotCancelOrder = "TradingSpotCancelOrder",
+  tradingSpotTrade = "TradingSpotTrade",
+  referralReplenishment = "ReferralReplenishment",
+  referralTradeReward = "ReferralTradeReward",
+  referralClaim = "ReferralClaim",
+  spotTradingTransit = "SpotTradingTransit",
+  spotTradingFees = "SpotTradingFees",
+  clientInternalTransfer = "ClientInternalTransfer",
+}

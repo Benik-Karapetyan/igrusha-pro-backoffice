@@ -1,0 +1,6 @@
+import { SetPasswordPage } from "@pages";
+import { createLazyRoute } from "@tanstack/react-router";
+
+export const Route = createLazyRoute("/set-password")({
+  component: SetPasswordPage,
+});
