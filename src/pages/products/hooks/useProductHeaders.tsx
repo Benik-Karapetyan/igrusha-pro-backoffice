@@ -1,8 +1,5 @@
-import { useMemo } from "react";
-
-import { TableAction, TableActionsCell, TableStatusCell, TableSwitchCell } from "@containers";
+import { TableActionsCell, TableStatusCell, TableSwitchCell } from "@containers";
 import { ProductFormValues } from "@forms";
-import { useCheckPermission } from "@hooks";
 import { mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { HeaderItem, Icon, TableItem } from "@ui-kit";
@@ -12,16 +9,6 @@ export const useProductHeaders = () => {
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
   const setSelectedIds = useStore((s) => s.setSelectedIds);
-  const { checkPermission } = useCheckPermission();
-
-  const actions = useMemo(() => {
-    const tableActions: TableAction[] = [];
-
-    if (checkPermission("product_update")) tableActions.push("edit");
-    if (checkPermission("product_delete")) tableActions.push("delete");
-
-    return tableActions;
-  }, [checkPermission]);
 
   const handleEdit = (item: TableItem) => {
     const locationIds = (item.locations as unknown as { id: number }[]).map((l) => l.id);
@@ -50,18 +37,18 @@ export const useProductHeaders = () => {
     },
     {
       text: "",
-      value: (item) => <TableActionsCell actions={actions} item={item} onEdit={handleEdit} onDelete={handleDelete} />,
+      value: (item) => (
+        <TableActionsCell actions={["edit", "delete"]} item={item} onEdit={handleEdit} onDelete={handleDelete} />
+      ),
       width: 80,
     },
   ];
 
-  if (checkPermission("product_update")) {
-    headers.splice(5, 0, {
-      text: "enabled",
-      value: (item) =>
-        typeof item?.status === "number" && <TableSwitchCell status={item.status} id={item.id as number} />,
-    });
-  }
+  headers.splice(5, 0, {
+    text: "enabled",
+    value: (item) =>
+      typeof item?.status === "number" && <TableSwitchCell status={item.status} id={item.id as number} />,
+  });
 
   return {
     headers,

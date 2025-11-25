@@ -8,7 +8,7 @@ import { Button, Checkbox, DialogFooter, TextField } from "@ui-kit";
 import { getErrorMessage } from "@utils";
 import { isEqual } from "lodash";
 
-import { ProductFormSchema, ProductFormValues } from "./ProductForm.consts";
+import { ProductFormSchema, ProductFormValues } from "./product-form.consts";
 
 interface ProductFormProps {
   onSuccess: () => void;

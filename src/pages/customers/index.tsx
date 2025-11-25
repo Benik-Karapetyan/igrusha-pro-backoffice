@@ -2,24 +2,20 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { AppHeader, FilterBar, TableContainer } from "@containers";
 import { CustomerFiltersForm, CustomerFiltersFormValues } from "@forms";
-import { useCheckPermission, useExportToCSV, useToast } from "@hooks";
-import { useAppMode } from "@hooks";
+import { useExportToCSV, useToast } from "@hooks";
 import { api } from "@services";
 import { useNavigate } from "@tanstack/react-router";
 import { FilterItem, RangeItem } from "@types";
 import { Button, DataTable, Icon, TableFooter, TextField } from "@ui-kit";
 import { getErrorMessage, searchIcon } from "@utils";
-import axios from "axios";
 import { debounce } from "lodash";
 
 import { useCustomerFilters } from "./hooks/useCustomerFilters";
 import { useCustomerHeaders } from "./hooks/useCustomerHeaders";
 
 export const CustomersPage = () => {
-  const { isWallet } = useAppMode();
   const toast = useToast();
   const navigate = useNavigate();
-  const { checkPermission } = useCheckPermission();
   const { exportToCSV } = useExportToCSV();
   const { headers } = useCustomerHeaders();
   const {
@@ -92,9 +88,7 @@ export const CustomersPage = () => {
     try {
       setLoading(true);
 
-      const { data } = isWallet
-        ? await axios.post(`${import.meta.env.VITE_WALLET_SERVICE_URL}/customers/all`, params)
-        : await api.post(`/bo/api/customers/all`, params);
+      const { data } = await api.post(`/bo/api/customers/all`, params);
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
@@ -103,20 +97,14 @@ export const CustomersPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [params, isWallet]);
+  }, [params]);
 
   useEffect(() => {
-    canFetch.current = true;
-  }, [isWallet]);
-
-  useEffect(() => {
-    if (!checkPermission("customer_read")) {
-      navigate({ to: "/" });
-    } else if (canFetch.current) {
+    if (canFetch.current) {
       canFetch.current = false;
       void getCustomers();
     }
-  }, [checkPermission, navigate, getCustomers]);
+  }, [navigate, getCustomers]);
 
   return (
     <div>
@@ -133,11 +121,9 @@ export const CustomersPage = () => {
         />
 
         <div className="flex items-center gap-4">
-          {checkPermission("customer_export") && (
-            <Button variant="text" onClick={handleExport}>
-              Export CSV
-            </Button>
-          )}
+          <Button variant="text" onClick={handleExport}>
+            Export CSV
+          </Button>
 
           <FilterBar
             filtersCount={params.filters.length + params.ranges.length}

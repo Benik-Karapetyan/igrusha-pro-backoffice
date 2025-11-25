@@ -1,7 +1,4 @@
-import { useMemo } from "react";
-
-import { CopyToClipboard, CustomerStatusCell, TableAction, TableActionsCell, TableDateCell } from "@containers";
-import { useCheckPermission } from "@hooks";
+import { CopyToClipboard, CustomerStatusCell, TableActionsCell, TableDateCell } from "@containers";
 import { mdiMinus } from "@mdi/js";
 import { useNavigate } from "@tanstack/react-router";
 import { ENUM_CUSTOMER_RISK_LEVEL } from "@types";
@@ -9,7 +6,6 @@ import { HeaderItem, Icon, TableItem } from "@ui-kit";
 
 export const useCustomerHeaders = () => {
   const navigate = useNavigate();
-  const { checkPermission } = useCheckPermission();
 
   const getRiskLevelText = (customerRiskLevel: ENUM_CUSTOMER_RISK_LEVEL) => {
     switch (customerRiskLevel) {
@@ -27,15 +23,6 @@ export const useCustomerHeaders = () => {
         return "";
     }
   };
-
-  const actions = useMemo(() => {
-    const tableActions: TableAction[] = [];
-
-    if (checkPermission("customer_read")) tableActions.push("watch");
-    if (checkPermission("customer_delete")) tableActions.push("delete");
-
-    return tableActions;
-  }, [checkPermission]);
 
   const headers: HeaderItem[] = [
     {
@@ -75,9 +62,9 @@ export const useCustomerHeaders = () => {
             <TableDateCell date={item.registrationDate} />
           )}
           <TableActionsCell
-            actions={actions}
+            actions={["watch", "delete"]}
             item={item}
-            onWatch={(item) => navigate({ to: "/customers/$id", params: { id: String(item.id) } })}
+            onWatch={(item) => navigate({ to: "/profile", params: { id: String(item.id) } })}
             className="ml-auto"
           />
         </div>

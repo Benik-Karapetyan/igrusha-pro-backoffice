@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { Button, Icon, NavLink, NavLinkGroup } from "@ui-kit";
 import { cn, sidebarMenuIcon } from "@utils";
 
-import { AppModeSwitch } from "../app-mode-switch";
 import { UserProfile } from "../user-profile";
 import { useNavlinks } from "./useNavlinks";
 
@@ -33,8 +32,6 @@ export const AppSidebar = () => {
         </Button>
       </div>
 
-      <AppModeSwitch />
-
       <div className={cn(!isAppSidebarMini && "px-4 py-3")}>
         <div
           className={cn(
@@ -50,7 +47,7 @@ export const AppSidebar = () => {
       <nav
         className={cn(
           "mt-3 flex flex-col overflow-auto",
-          isAppSidebarMini ? "h-[calc(100vh_-_16rem)]" : "h-[calc(100vh_-_15rem)]"
+          isAppSidebarMini ? "h-[calc(100vh_-_14rem)]" : "h-[calc(100vh_-_13rem)]"
         )}
       >
         {navLinks.map((link) =>

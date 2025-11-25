@@ -1,19 +1,18 @@
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 
-import { PhoneInput, ReadOnlyField } from "@containers";
+import { PhoneInput } from "@containers";
 import { mdiClose, mdiPencil } from "@mdi/js";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
-import { ISelectItem } from "@types";
-import { Button, Icon, ProgressCircular, TextField } from "@ui-kit";
+import { Button, Icon, ProgressCircular } from "@ui-kit";
 import { getErrorMessage } from "@utils";
 import { isAxiosError } from "axios";
 import { isEqual, omit } from "lodash";
 import { toast } from "sonner";
 
 import { ProfileAvatar } from "./components";
-import { emptyProfile, ProfileFormSchema, ProfileFormValues } from "./ProfileForm.consts";
+import { emptyProfile, ProfileFormSchema, ProfileFormValues } from "./profile-form.consts";
 
 interface ProfileFormProps {
   readOnly: boolean;
@@ -33,31 +32,12 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
   });
   const { Field, Subscribe } = form;
   const auth = useStore((s) => s.auth);
-  const { isLoading, user, avatar } = auth;
+  const { isLoading, avatar } = auth;
   const setAuth = useStore((s) => s.setAuth);
   const setDialogs = useStore((s) => s.setDialogs);
-  const canFetchInitialData = useRef(true);
   const [pageLoading, setPageLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [initialData, setInitialData] = useState({
-    roles: [] as ISelectItem[],
-    orgLevels: [] as ISelectItem[],
-    brands: [] as ISelectItem[],
-  });
-  const { roles, orgLevels, brands } = initialData;
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  const getRoleNames = (roleIds: number[]) => {
-    const roleNames: string[] = [];
-
-    roleIds?.forEach((id) => {
-      const role = roles.find((role) => role.id === id);
-
-      if (role) roleNames.push(role.name as string);
-    });
-
-    return roleNames;
-  };
 
   const handleEditClick = () => {
     onReadOnlyChange(false);
@@ -84,7 +64,7 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
   };
 
   const uploadImage = async (id: number, image: FormData) => {
-    await api.post(`/bo/api/users/uploadProfilePicture/${id}`, image, undefined, {
+    await api.post(`/bo/api/users/uploadProfilePicture/${id}`, image, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   };
@@ -132,52 +112,9 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
     }
   };
 
-  const getRoles = async () => {
-    const { data } = await api.post("/bo/api/roles/all", { page: 1, pageSize: 10000 });
-    return data.items;
-  };
-
-  const getOrgLevels = async () => {
-    const { data } = await api.get("/bo/api/orgLevels/all?page=1&pageSize=10000");
-    return data.items;
-  };
-
-  const getBrands = async () => {
-    const { data } = await api.get("/bo/api/brands/all?page=1&pageSize=10000");
-    return data.items;
-  };
-
-  const getInitialData = useCallback(async () => {
-    try {
-      const roles = await getRoles();
-      const orgLevels = await getOrgLevels();
-      const brands = await getBrands();
-
-      setInitialData({
-        roles,
-        orgLevels,
-        brands,
-      });
-    } catch (err) {
-      console.error("Error", err);
-    } finally {
-      setPageLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    if (user) {
-      const roleIds = user.userRoles.map((role: { id: number }) => role.id);
-      setDefaultValues({ ...user, roleIds, image: null, orgLevelId: null, brandId: null });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (canFetchInitialData.current) {
-      canFetchInitialData.current = false;
-      getInitialData();
-    }
-  }, [getInitialData]);
+    void getProfile();
+  }, [getProfile]);
 
   return isLoading || pageLoading ? (
     <div className="flex justify-center text-primary">
@@ -200,24 +137,6 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
 
         <div className="flex w-full flex-wrap gap-x-5 gap-y-1">
           <div className="w-[calc(50%_-_10px)]">
-            <Field name="firstName">
-              {({ state: { value } }) => <ReadOnlyField label="First Name" value={value} className="pb-4" />}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="lastName">
-              {({ state: { value } }) => <ReadOnlyField label="Last Name" value={value} className="pb-4" />}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="email">
-              {({ state: { value } }) => <ReadOnlyField label="Email Address" value={value} className="pb-4" />}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
             <Field name="phone">
               {(data) => {
                 const { name, state, handleChange } = data;
@@ -225,9 +144,7 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
                 const value = state?.value || "";
                 const meta = state?.meta || { errors: [] };
 
-                return readOnly ? (
-                  <ReadOnlyField label="Phone Number" value={value} className="pb-4" />
-                ) : (
+                return (
                   <PhoneInput
                     label="Phone Number"
                     name={name}
@@ -240,58 +157,6 @@ export const ProfileForm: FC<ProfileFormProps> = ({ readOnly, onReadOnlyChange }
                   />
                 );
               }}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="address">
-              {({ name, state: { value, meta }, handleChange }) =>
-                readOnly ? (
-                  <ReadOnlyField label="Address" value={value} className="pb-4" />
-                ) : (
-                  <TextField
-                    label="Address"
-                    name={name}
-                    value={value}
-                    errorMessage={meta.errors[0] || ""}
-                    onChange={(e) => handleChange(e.target.value)}
-                  />
-                )
-              }
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="roleIds">
-              {({ state: { value } }) => <ReadOnlyField label="Roles" value={getRoleNames(value)} className="pb-4" />}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="orgLevelId">
-              {({ state: { value } }) => (
-                <ReadOnlyField
-                  label="Org Level"
-                  value={orgLevels.find((o) => o.id === value)?.name as string}
-                  className="pb-4"
-                />
-              )}
-            </Field>
-          </div>
-
-          <div className="w-[calc(50%_-_10px)]">
-            <Field name="brandId">
-              {({ state: { value, meta } }) => (
-                <>
-                  <ReadOnlyField
-                    label="Brand"
-                    value={brands.find((b) => b.id === value)?.name as string}
-                    className="pb-4"
-                  />
-
-                  {meta.errors}
-                </>
-              )}
             </Field>
           </div>
         </div>

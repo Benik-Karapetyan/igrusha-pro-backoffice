@@ -9,7 +9,6 @@ import {
   UnsavedChangesDialog,
 } from "@containers";
 import { emptyProduct, ProductForm } from "@forms";
-import { useCheckPermission } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
@@ -19,7 +18,6 @@ import { useProductHeaders } from "./hooks/useProductHeaders";
 
 export const ProductsPage = () => {
   const navigate = useNavigate();
-  const { checkPermission } = useCheckPermission();
   const { headers } = useProductHeaders();
   const [params, setParams] = useState({
     page: 1,
@@ -66,21 +64,15 @@ export const ProductsPage = () => {
   }, [params]);
 
   useEffect(() => {
-    if (!checkPermission("product_read")) {
-      navigate({ to: "/" });
-    } else if (canFetch.current) {
+    if (canFetch.current) {
       canFetch.current = false;
       void getProducts();
     }
-  }, [checkPermission, navigate, getProducts]);
+  }, [navigate, getProducts]);
 
   return (
     <div>
-      <AppToolbar
-        hasCreatePermission={checkPermission("product_create")}
-        btnText="Add Product"
-        onAddClick={handleAddClick}
-      />
+      <AppToolbar btnText="Add Product" onAddClick={handleAddClick} />
 
       <TableContainer>
         <DataTable

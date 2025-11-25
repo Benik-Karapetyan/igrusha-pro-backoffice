@@ -3,24 +3,23 @@ import { FormEvent, useEffect, useState } from "react";
 import { useToast } from "@hooks";
 import { mdiEyeOffOutline, mdiEyeOutline } from "@mdi/js";
 import { api } from "@services";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Button, Icon, TextField } from "@ui-kit";
 import { getErrorMessage } from "@utils";
 
 interface ILoginModel {
-  username: string;
+  email: string;
   password: string;
 }
 
 export const SignInPage = () => {
   const { from } = useSearch({ from: "/sign-in" });
-  const navigate = useNavigate();
   const toast = useToast();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [signInData, setSignInData] = useState<ILoginModel>({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -28,18 +27,10 @@ export const SignInPage = () => {
     try {
       setLoading(true);
 
-      const { data } = await api.post("/bo/api/auth/login", signInData);
+      const { data } = await api.post("/users/sign-in", signInData);
 
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        location.reload();
-      }
-
-      navigate({
-        to: "/customers",
-        replace: true,
-      });
+      localStorage.setItem("accessToken", data);
+      location.reload();
     } catch (err) {
       toast.error(getErrorMessage(err));
     } finally {
@@ -77,8 +68,8 @@ export const SignInPage = () => {
             <div className="flex flex-col gap-1">
               <TextField
                 label="Username"
-                value={signInData.username}
-                onChange={(e) => setSignInData({ ...signInData, username: e.target.value })}
+                value={signInData.email}
+                onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
               />
 
               <TextField

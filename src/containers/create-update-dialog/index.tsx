@@ -14,12 +14,7 @@ export const CreateUpdateDialog: FC<PropsWithChildren<CreateUpdateDialogProps>> 
   const dialogMode = useStore((s) => s.dialogMode);
   const setDialogs = useStore((s) => s.setDialogs);
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
-  const width =
-    dialogType === "product" || dialogType === "network" || dialogType === "orgLevel" || dialogType === "brand"
-      ? 400
-      : dialogType === "marketCategory"
-        ? 480
-        : 592;
+  const width = dialogType === "product" ? 400 : 592;
 
   const handleOpenChange = (value: boolean) => {
     if (value) {
