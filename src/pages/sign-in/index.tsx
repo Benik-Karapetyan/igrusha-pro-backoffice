@@ -27,7 +27,7 @@ export const SignInPage = () => {
     try {
       setLoading(true);
 
-      const { data } = await api.post("/users/sign-in", signInData);
+      const { data } = await api.post("/auth/sign-in", signInData);
 
       localStorage.setItem("accessToken", data);
       location.reload();

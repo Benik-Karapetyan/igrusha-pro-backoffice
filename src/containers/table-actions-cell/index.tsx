@@ -84,7 +84,7 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
           color="icon-default"
           className="cursor-pointer"
           disabled={disabled?.includes("deploy")}
-          onClick={() => onDeploy?.(item.id as number)}
+          onClick={() => onDeploy?.(item._id as number)}
         />
       )}
 
@@ -94,7 +94,7 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
           color="icon-default"
           className="cursor-pointer"
           disabled={disabled?.includes("start")}
-          onClick={() => onStart?.(item.id as number)}
+          onClick={() => onStart?.(item._id as number)}
         />
       )}
 
@@ -104,7 +104,7 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
           color="icon-default"
           className="cursor-pointer"
           disabled={disabled?.includes("stop")}
-          onClick={() => onStop?.(item.id as number)}
+          onClick={() => onStop?.(item._id as number)}
         />
       )}
 
@@ -114,11 +114,11 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
           color="icon-primary"
           className="cursor-pointer"
           disabled={disabled?.includes("withdraw")}
-          onClick={() => onWithdraw?.(item.id as number)}
+          onClick={() => onWithdraw?.(item._id as number)}
         />
       )}
 
-      {actions.includes("edit") && item.status !== 3 && (
+      {actions.includes("edit") && (
         <Icon
           name={editIcon}
           color="icon-primary"
@@ -128,13 +128,13 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
         />
       )}
 
-      {actions.includes("delete") && item.status === 2 && (
+      {actions.includes("delete") && (
         <Icon
           name={mdiDelete}
-          color="icon-default"
+          color="icon-error"
           className="cursor-pointer"
           disabled={disabled?.includes("delete")}
-          onClick={() => onDelete?.(item.id as number)}
+          onClick={() => onDelete?.(item._id as number)}
         />
       )}
     </div>

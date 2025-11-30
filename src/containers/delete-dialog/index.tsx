@@ -9,11 +9,10 @@ import { getErrorMessage } from "@utils";
 interface DeleteDialogProps {
   title: string;
   deleteUrl: string;
-  idAsParam?: boolean; // This will be removed, when all the delete endpoints will be in REST standard
   onSuccess: () => void;
 }
 
-export const DeleteDialog: FC<DeleteDialogProps> = ({ title, deleteUrl, idAsParam, onSuccess }) => {
+export const DeleteDialog: FC<DeleteDialogProps> = ({ title, deleteUrl, onSuccess }) => {
   const toast = useToast();
   const dialogs = useStore((s) => s.dialogs);
   const setDialogs = useStore((s) => s.setDialogs);
@@ -23,9 +22,7 @@ export const DeleteDialog: FC<DeleteDialogProps> = ({ title, deleteUrl, idAsPara
   const deleteElement = async () => {
     try {
       setLoading(true);
-      await api.delete(
-        idAsParam ? `/bo/api/${deleteUrl}/${selectedIds[0]}` : `/bo/api/${deleteUrl}?id=${selectedIds[0]}`
-      );
+      await api.delete(`/${deleteUrl}/${selectedIds[0]}`);
       setDialogs([]);
       toast.success(`${title} has been deleted`);
       onSuccess();
@@ -46,10 +43,10 @@ export const DeleteDialog: FC<DeleteDialogProps> = ({ title, deleteUrl, idAsPara
         <DialogDescription className="text-center">Are you sure you want to delete this element?</DialogDescription>
 
         <DialogFooter className="gap-4">
-          <Button variant="outline" className="w-[160px]" onClick={() => setDialogs([])}>
+          <Button variant="ghost" onClick={() => setDialogs([])}>
             Cancel
           </Button>
-          <Button loading={loading} className="w-[160px]" onClick={deleteElement}>
+          <Button loading={loading} onClick={deleteElement}>
             Delete
           </Button>
         </DialogFooter>

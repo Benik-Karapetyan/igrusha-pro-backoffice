@@ -15,7 +15,19 @@ interface TextFieldProps extends ComponentProps<"input"> {
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
-    { className, type, label, dense, hint, error, errorMessage, hideDetails, prependInner, appendInner, ...props },
+    {
+      className,
+      type,
+      label,
+      dense,
+      hint,
+      error,
+      errorMessage,
+      hideDetails = true,
+      prependInner,
+      appendInner,
+      ...props
+    },
     ref
   ) => {
     const containerRef = useRef<HTMLDivElement>(null);

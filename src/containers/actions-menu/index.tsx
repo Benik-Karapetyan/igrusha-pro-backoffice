@@ -6,7 +6,6 @@ import { Button, Icon, Popover, PopoverContent, PopoverTrigger } from "@ui-kit";
 import { cn } from "@utils";
 
 import { AppDrawer } from "../app-drawer";
-import { WarningDialog } from "../warning-dialog";
 import { ActionsMenuItem } from "./components/actions-menu-item";
 
 interface ActionsMenuProps {
@@ -19,13 +18,9 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({ ordersCheckLoading, hasActiv
   const setDialogs = useStore((s) => s.setDialogs);
   const [open, setOpen] = useState(false);
   const [suspendDrawerOpen, setSuspendDrawerOpen] = useState(false);
-  const [warningText, setWarningText] = useState("");
 
   const handleBanClick = () => {
     if (hasActiveOrders) {
-      setWarningText(
-        "You cannot ban this customer because there are active orders. Please cancel all active orders first."
-      );
       setDialogs(["warning"]);
     } else {
       setDialogs(["banCustomer"]);
@@ -34,9 +29,6 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({ ordersCheckLoading, hasActiv
 
   const handleCloseClick = () => {
     if (hasActiveOrders) {
-      setWarningText(
-        "You cannot close this customer because there are active orders. Please cancel all active orders first."
-      );
       setDialogs(["warning"]);
     } else {
       setDialogs(["closeCustomer"]);
@@ -77,8 +69,6 @@ export const ActionsMenu: FC<ActionsMenuProps> = ({ ordersCheckLoading, hasActiv
       ></AppDrawer>
 
       <AppDrawer open={suspendDrawerOpen} onOpenChange={setSuspendDrawerOpen}></AppDrawer>
-
-      <WarningDialog description={warningText} />
     </>
   );
 };

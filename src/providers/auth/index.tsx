@@ -22,7 +22,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const token = localStorage.getItem("accessToken");
 
       if (token) {
-        const { data } = await api.get("/users/me");
+        const { data } = await api.get("/auth/me");
         setStateAuth({ isLoading: false, check: true, user: data });
       }
     } catch (err) {

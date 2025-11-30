@@ -80,6 +80,8 @@ interface IStoreState {
   setIsAppSidebarMini: (value: boolean) => void;
   drawerOpen: boolean;
   setDrawerOpen: (value: boolean) => void;
+  drawerType: DialogTypes | null;
+  setDrawerType: (type: DialogTypes | null) => void;
   dialogs: DialogTypes[];
   setDialogs: (dialogs: DialogTypes[]) => void;
   dialogMode: DialogMode;
@@ -103,10 +105,12 @@ export const useStore = create<IStoreState>((set) => ({
     user: null,
   },
   setAuth: (auth) => set({ auth }),
-  isAppSidebarMini: false,
+  isAppSidebarMini: true,
   setIsAppSidebarMini: (isAppSidebarMini) => set({ isAppSidebarMini }),
   drawerOpen: false,
   setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
+  drawerType: null,
+  setDrawerType: (drawerType) => set({ drawerType }),
   dialogs: [],
   setDialogs: (dialogs) => set({ dialogs }),
   dialogMode: "",

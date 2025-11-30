@@ -1,18 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  AppToolbar,
-  CreateUpdateDialog,
-  DeleteDialog,
-  StatusDialog,
-  TableContainer,
-  UnsavedChangesDialog,
-} from "@containers";
+import { AppDrawer, AppHeader, DeleteDialog, TableContainer, UnsavedChangesDialog } from "@containers";
 import { emptyProduct, ProductForm } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
-import { DataTable } from "@ui-kit";
+import { Button, DataTable, TableFooter } from "@ui-kit";
 
 import { useProductHeaders } from "./hooks/useProductHeaders";
 
@@ -28,7 +21,8 @@ export const ProductsPage = () => {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
-  const setDialogs = useStore((s) => s.setDialogs);
+  const drawerType = useStore((s) => s.drawerType);
+  const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
 
@@ -45,14 +39,17 @@ export const ProductsPage = () => {
   const handleAddClick = () => {
     setProduct(emptyProduct);
     setDialogMode("create");
-    setDialogs(["product"]);
+    setDrawerType("product");
   };
 
   const getProducts = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/bo/api/products/all", { params });
+      const { data } = await api.get("/products", { params });
+
+      console.log("data", data.items);
+
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
@@ -72,27 +69,35 @@ export const ProductsPage = () => {
 
   return (
     <div>
-      <AppToolbar btnText="Add Product" onAddClick={handleAddClick} />
+      <AppHeader title="Products" MainButton={<Button onClick={handleAddClick}>Add Product</Button>} />
 
       <TableContainer>
-        <DataTable
-          headers={headers}
-          items={items}
-          loading={loading}
-          page={params.page}
-          onPageChange={handlePageChange}
-          itemsPerPage={params.pageSize}
-          onItemsPerPageChange={handlePerPageChange}
-          pageCount={totalPages}
-          itemsTotalCount={totalRecords}
-        />
+        <div className="overflow-auto">
+          <DataTable headers={headers} items={items} loading={loading} hideFooter />
+        </div>
+
+        <table className="w-full">
+          <TableFooter
+            headersLength={headers.length}
+            page={params.page}
+            onPageChange={handlePageChange}
+            itemsPerPage={params.pageSize}
+            onItemsPerPageChange={handlePerPageChange}
+            pageCount={totalPages}
+            itemsTotalCount={totalRecords}
+          />
+        </table>
       </TableContainer>
 
-      <CreateUpdateDialog title="Product" dialogType="product">
+      <AppDrawer
+        open={drawerType === "product"}
+        onOpenChange={(open) => setDrawerType(open ? "product" : null)}
+        size="xl"
+      >
         <ProductForm onSuccess={getProducts} />
-      </CreateUpdateDialog>
+      </AppDrawer>
+
       <UnsavedChangesDialog />
-      <StatusDialog title="Product" updateUrl="products" onSuccess={getProducts} />
       <DeleteDialog title="Product" deleteUrl="products" onSuccess={getProducts} />
     </div>
   );
