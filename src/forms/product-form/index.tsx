@@ -106,14 +106,12 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       const gallery: string[] = [];
 
       if (uploadedImages.length) {
-        await Promise.all(
-          uploadedImages.map(async (image) => {
-            await api.put(image.url, image.file, {
-              headers: { "Content-Type": image.file.type },
-            });
-            gallery.push(image.key);
-          })
-        );
+        for (const image of uploadedImages) {
+          await api.put(image.url, image.file, {
+            headers: { "Content-Type": image.file.type },
+          });
+          gallery.push(image.key);
+        }
       }
 
       await api.post("/products", {
@@ -143,14 +141,13 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         await api.put(`/uploads/delete-images/`, {
           gallery: requestData.gallery.map((image) => new URL(image).pathname.slice(1)),
         });
-        await Promise.all(
-          uploadedImages.map(async (image) => {
-            await api.put(image.url, image.file, {
-              headers: { "Content-Type": image.file.type },
-            });
-            gallery.push(image.key);
-          })
-        );
+
+        for (const image of uploadedImages) {
+          await api.put(image.url, image.file, {
+            headers: { "Content-Type": image.file.type },
+          });
+          gallery.push(image.key);
+        }
       } else {
         gallery = requestData.gallery.map((image) => `/uploads/${image.split("/").pop()}`);
       }
