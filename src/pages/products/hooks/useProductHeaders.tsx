@@ -9,7 +9,6 @@ export const useProductHeaders = () => {
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
-  const setSelectedIds = useStore((s) => s.setSelectedIds);
 
   const handleEdit = (item: TableItem) => {
     setProduct({
@@ -20,8 +19,10 @@ export const useProductHeaders = () => {
     setDrawerType("product");
   };
 
-  const handleDelete = (_id: number) => {
-    setSelectedIds([_id]);
+  const handleDelete = (item: TableItem) => {
+    setProduct({
+      ...item,
+    } as unknown as ProductFormValues);
     setDialogs(["delete"]);
   };
 

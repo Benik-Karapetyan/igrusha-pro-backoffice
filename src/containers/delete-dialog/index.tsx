@@ -16,13 +16,16 @@ export const DeleteDialog: FC<DeleteDialogProps> = ({ title, deleteUrl, onSucces
   const toast = useToast();
   const dialogs = useStore((s) => s.dialogs);
   const setDialogs = useStore((s) => s.setDialogs);
-  const selectedIds = useStore((s) => s.selectedIds);
+  const product = useStore((s) => s.product);
   const [loading, setLoading] = useState(false);
 
   const deleteElement = async () => {
     try {
       setLoading(true);
-      await api.delete(`/${deleteUrl}/${selectedIds[0]}`);
+      await api.put(`/uploads/delete-images/`, {
+        gallery: product.gallery.map((image) => new URL(image).pathname.slice(1)),
+      });
+      await api.delete(`/${deleteUrl}/${product._id}`);
       setDialogs([]);
       toast.success(`${title} has been deleted`);
       onSuccess();

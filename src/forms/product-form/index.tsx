@@ -6,7 +6,7 @@ import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
 import { Button, DrawerFooter, DrawerHeader, DrawerTitle, Icon, Textarea, TextField, Typography } from "@ui-kit";
 import { cn, getErrorMessage, searchIcon, uploadIcon } from "@utils";
-import { debounce, isEqual } from "lodash";
+import { debounce, isEqual, omit } from "lodash";
 
 import { ProductFormSchema, ProductFormValues } from "./product-form.consts";
 
@@ -35,7 +35,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
-  const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<{ url: string; key: string; file: File }[]>([]);
   const [isVariantOfSearch, setIsVariantOfSearch] = useState("");
   const [isVariantOfSearchDebounced, setIsVariantOfSearchDebounced] = useState("");
   const [isVariantOfProducts, setIsVariantOfProducts] = useState<ProductFormValues[]>([]);
@@ -73,9 +73,14 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      setUploadedFiles((prev) => (prev ? [...prev, file] : [file]));
-
       setValue(form.state.values.gallery.concat(URL.createObjectURL(file)));
+
+      const { data } = await api.post("/uploads/get-presigned-url", {
+        filename: file.name,
+        contentType: file.type,
+      });
+
+      setUploadedImages((prev) => [...prev, { url: data.url, key: data.key, file }]);
     }
   };
 
@@ -98,28 +103,24 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
     try {
       setLoading(true);
 
-      const formData = new FormData();
-      formData.append("name", JSON.stringify(requestData.name));
-      formData.append("description", JSON.stringify(requestData.description));
-      formData.append("price", requestData.price.toString());
-      formData.append("discount", requestData.discount.toString() || "0");
-      formData.append("numberInStock", requestData.numberInStock.toString() || "0");
-      formData.append("rating", requestData.rating.toString() || "0");
-      formData.append("reviewCount", requestData.reviewCount.toString());
-      formData.append("isVariantOf", requestData.isVariantOf || "");
-      formData.append("sectionName", requestData.sectionName);
-      formData.append("relatedProducts", JSON.stringify(requestData.relatedProducts));
+      const gallery: string[] = [];
 
-      if (uploadedFiles?.length) {
-        Array.from(uploadedFiles).forEach((file) => {
-          formData.append("gallery", file);
-        });
+      if (uploadedImages.length) {
+        await Promise.all(
+          uploadedImages.map(async (image) => {
+            await api.put(image.url, image.file, {
+              headers: { "Content-Type": image.file.type },
+            });
+            gallery.push(image.key);
+          })
+        );
       }
 
-      await api.post("/products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await api.post("/products", {
+        ...requestData,
+        gallery,
+        discount: requestData.discount ? requestData.discount : 0,
+        numberInStock: requestData.numberInStock ? requestData.numberInStock : 0,
       });
 
       setDrawerType(null);
@@ -136,30 +137,29 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
     try {
       setLoading(true);
 
-      const formData = new FormData();
-      formData.append("name", JSON.stringify(requestData.name));
-      formData.append("description", JSON.stringify(requestData.description));
-      formData.append("price", requestData.price.toString());
-      formData.append("discount", requestData.discount.toString() || "0");
-      formData.append("numberInStock", requestData.numberInStock.toString() || "0");
-      formData.append("rating", requestData.rating.toString() || "0");
-      formData.append("reviewCount", requestData.reviewCount.toString());
-      formData.append("isVariantOf", requestData.isVariantOf || "");
-      formData.append("sectionName", requestData.sectionName);
-      formData.append("relatedProducts", JSON.stringify(requestData.relatedProducts));
+      let gallery: string[] = [];
 
-      if (uploadedFiles?.length) {
-        Array.from(uploadedFiles).forEach((file) => {
-          formData.append("gallery", file);
+      if (uploadedImages.length) {
+        await api.put(`/uploads/delete-images/`, {
+          gallery: requestData.gallery.map((image) => new URL(image).pathname.slice(1)),
         });
+        await Promise.all(
+          uploadedImages.map(async (image) => {
+            await api.put(image.url, image.file, {
+              headers: { "Content-Type": image.file.type },
+            });
+            gallery.push(image.key);
+          })
+        );
       } else {
-        formData.append("gallery", JSON.stringify(defaultValues.gallery));
+        gallery = requestData.gallery.map((image) => `/uploads/${image.split("/").pop()}`);
       }
 
-      await api.put(`/products/${defaultValues._id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await api.put(`/products/${defaultValues._id}`, {
+        ...omit(requestData, "_id"),
+        gallery,
+        discount: requestData.discount ? requestData.discount : 0,
+        numberInStock: requestData.numberInStock ? requestData.numberInStock : 0,
       });
 
       setDrawerType(null);

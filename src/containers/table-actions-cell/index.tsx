@@ -28,7 +28,7 @@ interface TableActionsCellProps {
   onStop?: (id: number) => void;
   onWithdraw?: (id: number) => void;
   onEdit?: (item: TableItem) => void;
-  onDelete?: (id: number) => void;
+  onDelete?: (item: TableItem) => void;
 }
 
 export const TableActionsCell: FC<TableActionsCellProps> = ({
@@ -134,7 +134,7 @@ export const TableActionsCell: FC<TableActionsCellProps> = ({
           color="icon-error"
           className="cursor-pointer"
           disabled={disabled?.includes("delete")}
-          onClick={() => onDelete?.(item._id as number)}
+          onClick={() => onDelete?.(item)}
         />
       )}
     </div>
