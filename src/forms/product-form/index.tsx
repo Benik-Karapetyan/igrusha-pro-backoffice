@@ -138,7 +138,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       let gallery: string[] = [];
 
       if (uploadedImages.length) {
-        await api.put(`/uploads/delete-images/`, {
+        await api.put(`/uploads/delete-images`, {
           gallery: requestData.gallery.map((image) => new URL(image).pathname.slice(1)),
         });
 
@@ -149,7 +149,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
           gallery.push(image.key);
         }
       } else {
-        gallery = requestData.gallery.map((image) => `/uploads/${image.split("/").pop()}`);
+        gallery = requestData.gallery.map((image) => `uploads/${image.split("/").pop()}`);
       }
 
       await api.put(`/products/${defaultValues._id}`, {
