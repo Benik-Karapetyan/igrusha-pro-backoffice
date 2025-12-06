@@ -20,4 +20,3 @@ export * from "./copy-to-clipboard";
 export * from "./range-picker-dialog";
 export * from "./actions-menu";
 export * from "./customers/customer-status-cell";
-export * from "./confirm-trigger-change-dialog";

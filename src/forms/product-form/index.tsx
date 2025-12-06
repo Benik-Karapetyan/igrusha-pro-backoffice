@@ -6,6 +6,7 @@ import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
 import { Button, DrawerFooter, DrawerHeader, DrawerTitle, Icon, Textarea, TextField, Typography } from "@ui-kit";
 import { cn, getErrorMessage, searchIcon, uploadIcon } from "@utils";
+import axios from "axios";
 import { debounce, isEqual, omit } from "lodash";
 
 import { ProductFormSchema, ProductFormValues } from "./product-form.consts";
@@ -107,7 +108,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
 
       if (uploadedImages.length) {
         for (const image of uploadedImages) {
-          await api.put(image.url, image.file, {
+          await axios.put(image.url, image.file, {
             headers: { "Content-Type": image.file.type },
           });
           gallery.push(image.key);
@@ -143,7 +144,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         });
 
         for (const image of uploadedImages) {
-          await api.put(image.url, image.file, {
+          await axios.put(image.url, image.file, {
             headers: { "Content-Type": image.file.type },
           });
           gallery.push(image.key);
