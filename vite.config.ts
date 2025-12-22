@@ -14,6 +14,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@components": "/src/components",
       "@containers": "/src/containers",
       "@forms": "/src/forms",
       "@hooks": "/src/hooks",

@@ -1,3 +1,4 @@
+import { ENUM_PRODUCT_GENDER } from "@types";
 import { z } from "zod";
 
 export const ProductFormSchema = z.object({
@@ -24,7 +25,31 @@ export const ProductFormSchema = z.object({
     .number()
     .positive("Number in stock must be greater than or equal to 0")
     .or(z.literal(0))
-    .or(z.literal("")),
+    .or(z.string().min(1, "Number in stock is required")),
+  gender: z.enum(["unisex", "boy", "girl"]),
+  ageRange: z.object({
+    from: z
+      .number()
+      .positive("Min age must be greater than 0")
+      .or(z.string().min(1, "Min age is required"))
+      .or(z.literal(0)),
+    to: z.number().positive("Max age must be greater than 0").optional(),
+  }),
+  size: z
+    .object({
+      length: z.number().positive("Length must be greater than 0").or(z.string().min(1, "Length is required")),
+      width: z.number().positive("Width must be greater than 0").or(z.string().min(1, "Width is required")),
+      height: z.number().positive("Height must be greater than 0").or(z.string().min(1, "Height is required")),
+    })
+    .optional(),
+  boxSize: z
+    .object({
+      length: z.number().positive("Length must be greater than 0").or(z.string().min(1, "Length is required")),
+      width: z.number().positive("Width must be greater than 0").or(z.string().min(1, "Width is required")),
+      height: z.number().positive("Height must be greater than 0").or(z.string().min(1, "Height is required")),
+    })
+    .optional(),
+  brand: z.string().optional(),
   rating: z
     .number()
     .positive("Rating must be greater than 0")
@@ -54,8 +79,18 @@ export const emptyProduct: ProductFormValues = {
   price: "",
   discount: "",
   numberInStock: "",
+  gender: "unisex",
+  ageRange: {
+    from: "",
+  },
   rating: 0,
   reviewCount: 0,
   sectionName: "",
   relatedProducts: [],
 };
+
+export const genderOptions = [
+  { name: "Unisex", id: ENUM_PRODUCT_GENDER.Unisex },
+  { name: "Boy", id: ENUM_PRODUCT_GENDER.Boy },
+  { name: "Girl", id: ENUM_PRODUCT_GENDER.Girl },
+];

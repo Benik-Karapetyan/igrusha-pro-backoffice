@@ -1,6 +1,7 @@
 export * from "./check-email";
 export * from "./customers";
 export * from "./main";
+export * from "./orders";
 export * from "./products";
 export * from "./profile";
 export * from "./recover-password";

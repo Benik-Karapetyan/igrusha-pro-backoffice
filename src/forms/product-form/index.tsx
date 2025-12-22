@@ -1,15 +1,27 @@
-import { ChangeEvent, FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useRef, useState } from "react";
 
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
-import { Button, DrawerFooter, DrawerHeader, DrawerTitle, Icon, Textarea, TextField, Typography } from "@ui-kit";
-import { cn, getErrorMessage, searchIcon, uploadIcon } from "@utils";
+import {
+  Button,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Icon,
+  Select,
+  Textarea,
+  TextField,
+  Typography,
+} from "@ui-kit";
+import { cn, getErrorMessage, uploadIcon } from "@utils";
 import axios from "axios";
-import { debounce, isEqual, omit } from "lodash";
+import { isEqual, omit } from "lodash";
 
-import { ProductFormSchema, ProductFormValues } from "./product-form.consts";
+import { genderOptions, ProductFormSchema, ProductFormValues } from "./product-form.consts";
+import { RelatedProducts } from "./related-products";
+import { VariantOfProducts } from "./variant-of-products";
 
 interface ProductFormProps {
   onSuccess: () => void;
@@ -37,34 +49,6 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
   const [uploadedImages, setUploadedImages] = useState<{ url: string; key: string; file: File }[]>([]);
-  const [isVariantOfSearch, setIsVariantOfSearch] = useState("");
-  const [isVariantOfSearchDebounced, setIsVariantOfSearchDebounced] = useState("");
-  const [isVariantOfProducts, setIsVariantOfProducts] = useState<ProductFormValues[]>([]);
-  const [relatedProductsSearch, setRelatedProductsSearch] = useState("");
-  const [relatedProductsSearchDebounced, setRelatedProductsSearchDebounced] = useState("");
-  const [relatedProducts, setRelatedProducts] = useState<ProductFormValues[]>([]);
-
-  const debouncedSearchTermChange = useRef(
-    debounce((searchTerm: string) => {
-      setIsVariantOfSearchDebounced(searchTerm);
-    }, 1000)
-  ).current;
-
-  const debouncedRelatedProductsSearchChange = useRef(
-    debounce((searchTerm: string) => {
-      setRelatedProductsSearchDebounced(searchTerm);
-    }, 1000)
-  ).current;
-
-  const handleSearchChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-    setIsVariantOfSearch(value);
-    debouncedSearchTermChange(value);
-  };
-
-  const handleRelatedProductsSearchChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-    setRelatedProductsSearch(value);
-    debouncedRelatedProductsSearchChange(value);
-  };
 
   const handleBrowseFile = () => {
     fileInputRef.current?.click();
@@ -154,7 +138,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       }
 
       await api.put(`/products/${defaultValues._id}`, {
-        ...omit(requestData, "_id", "updatedAt"),
+        ...omit(requestData, "_id", "productNumber", "updatedAt", "initialNumberInStock"),
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
         numberInStock: requestData.numberInStock ? requestData.numberInStock : 0,
@@ -169,44 +153,6 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       setLoading(false);
     }
   };
-
-  const getVariantOfProducts = useCallback(async () => {
-    try {
-      const { data } = await api.get("/products", {
-        params: {
-          page: 1,
-          pageSize: 10,
-          search: isVariantOfSearchDebounced,
-        },
-      });
-      setIsVariantOfProducts(data.items);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isVariantOfSearchDebounced]);
-
-  const getRelatedProducts = useCallback(async () => {
-    try {
-      const { data } = await api.get("/products", {
-        params: {
-          page: 1,
-          pageSize: 10,
-          search: relatedProductsSearchDebounced,
-        },
-      });
-      setRelatedProducts(data.items);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [relatedProductsSearchDebounced]);
-
-  useEffect(() => {
-    void getVariantOfProducts();
-  }, [getVariantOfProducts]);
-
-  useEffect(() => {
-    void getRelatedProducts();
-  }, [getRelatedProducts]);
 
   return (
     <form className="h-full" onChange={handleChange} onSubmit={handleSubmit}>
@@ -412,7 +358,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex items-end gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="sectionName">
               {({ name, state: { value, meta }, handleChange }) => (
@@ -427,77 +373,195 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
               )}
             </Field>
           </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="gender">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <Select
+                  label="Gender"
+                  placeholder="Select gender"
+                  name={name}
+                  value={value}
+                  items={genderOptions}
+                  hideDetails
+                  errorMessage={meta.errors[0] || ""}
+                  onValueChange={(value) => handleChange(value as "unisex" | "boy" | "girl")}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="brand">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Brand"
+                  placeholder="Enter brand name"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
         </div>
 
-        <Field name="isVariantOf">
+        <Field name="ageRange">
           {({ name, state: { value, meta }, handleChange }) => (
-            <div className="flex flex-col gap-4">
-              <div className="w-[calc(100%_/_3_-_0.68rem)]">
-                <TextField
-                  label="Is variant of"
-                  placeholder="Search product name"
-                  name={name}
-                  value={isVariantOfSearch}
-                  errorMessage={meta.errors[0] || ""}
-                  prependInner={<Icon name={searchIcon} className="mr-1" />}
-                  onChange={handleSearchChange}
-                />
-              </div>
+            <div className="flex flex-col gap-2">
+              <Typography variant="heading-4" color="secondary">
+                Age Range
+              </Typography>
 
-              <div className="flex flex-col">
-                {isVariantOfProducts.map((product) => (
-                  <div
-                    key={product._id}
-                    className={cn(
-                      "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
-                      value === product._id && "border border-primary bg-background-default"
-                    )}
-                    onClick={() => handleChange(product._id)}
-                  >
-                    <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
-                    <Typography>{product.name.en}</Typography>
-                  </div>
-                ))}
+              <div className="flex gap-4">
+                <TextField
+                  label="From"
+                  placeholder="Enter from"
+                  type="number"
+                  name={name}
+                  value={value?.from}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={({ target }) =>
+                    value ? handleChange({ ...value, from: target.value ? +target.value : "" }) : undefined
+                  }
+                />
+
+                <TextField
+                  label="To"
+                  placeholder="Enter to"
+                  type="number"
+                  name={name}
+                  value={value?.to}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={({ target }) =>
+                    value ? handleChange({ ...value, to: target.value ? +target.value : undefined }) : undefined
+                  }
+                />
               </div>
             </div>
           )}
         </Field>
 
+        <div className="flex gap-4">
+          <Field name="size">
+            {({ name, state: { value, meta }, handleChange }) => (
+              <div className="flex flex-col gap-2">
+                <Typography variant="heading-4" color="secondary">
+                  Size
+                </Typography>
+
+                <div className="flex gap-4">
+                  <TextField
+                    label="Length"
+                    placeholder="Enter length"
+                    type="number"
+                    name={name}
+                    value={value?.length}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, length: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+
+                  <TextField
+                    label="Width"
+                    placeholder="Enter width"
+                    type="number"
+                    name={name}
+                    value={value?.width}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, width: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+
+                  <TextField
+                    label="Height"
+                    placeholder="Enter height"
+                    type="number"
+                    name={name}
+                    value={value?.height}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, height: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </Field>
+
+          <Field name="boxSize">
+            {({ name, state: { value, meta }, handleChange }) => (
+              <div className="flex flex-col gap-2">
+                <Typography variant="heading-4" color="secondary">
+                  Box Size
+                </Typography>
+
+                <div className="flex gap-4">
+                  <TextField
+                    label="Length"
+                    placeholder="Enter length"
+                    type="number"
+                    name={name}
+                    value={value?.length}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, length: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+
+                  <TextField
+                    label="Width"
+                    placeholder="Enter width"
+                    type="number"
+                    name={name}
+                    value={value?.width}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, width: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+
+                  <TextField
+                    label="Height"
+                    placeholder="Enter height"
+                    type="number"
+                    name={name}
+                    value={value?.height}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target }) =>
+                      value ? handleChange({ ...value, height: target.value ? +target.value : "" }) : undefined
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </Field>
+        </div>
+
+        <Field name="isVariantOf">
+          {({ name, state: { value, meta }, handleChange }) => (
+            <VariantOfProducts
+              name={name}
+              value={value}
+              headersLength={1}
+              errorMessage={meta.errors[0] || ""}
+              handleChange={handleChange}
+            />
+          )}
+        </Field>
+
         <Field name="relatedProducts">
           {({ name, state: { value, meta }, handleChange }) => (
-            <div className="flex flex-col gap-4">
-              <div className="w-[calc(100%_/_3_-_0.68rem)]">
-                <TextField
-                  label="Related products"
-                  placeholder="Search product name"
-                  name={name}
-                  value={relatedProductsSearch}
-                  errorMessage={meta.errors[0] || ""}
-                  prependInner={<Icon name={searchIcon} className="mr-1" />}
-                  onChange={handleRelatedProductsSearchChange}
-                />
-              </div>
-
-              <div className="flex flex-col">
-                {relatedProducts.map((product) => (
-                  <div
-                    key={product._id}
-                    className={cn(
-                      "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
-                      product._id && value?.includes(product._id) && "border border-primary bg-background-default"
-                    )}
-                    onClick={() =>
-                      product._id && value?.includes(product._id)
-                        ? handleChange(value?.filter((id) => id !== product._id) || [])
-                        : handleChange([...(value || []), product._id || ""])
-                    }
-                  >
-                    <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
-                    <Typography>{product.name.en}</Typography>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RelatedProducts
+              name={name}
+              value={value || []}
+              headersLength={1}
+              errorMessage={meta.errors[0] || ""}
+              handleChange={handleChange}
+            />
           )}
         </Field>
       </div>

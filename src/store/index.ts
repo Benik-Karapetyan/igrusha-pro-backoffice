@@ -96,6 +96,10 @@ interface IStoreState {
   setProfile: (value: ProfileFormValues) => void;
   resetPasswordData: IResetPasswordData | null;
   setResetPasswordData: (value: IResetPasswordData | null) => void;
+  selectedCompleteOrderId: string | null;
+  setSelectedCompleteOrderId: (value: string | null) => void;
+  selectedConfirmReturnOrderId: string | null;
+  setSelectedConfirmReturnOrderId: (value: string | null) => void;
 }
 
 export const useStore = create<IStoreState>((set) => ({
@@ -125,4 +129,8 @@ export const useStore = create<IStoreState>((set) => ({
   setProfile: (profile) => set({ profile }),
   resetPasswordData: null,
   setResetPasswordData: (resetPasswordData) => set({ resetPasswordData }),
+  selectedCompleteOrderId: null,
+  setSelectedCompleteOrderId: (selectedCompleteOrderId) => set({ selectedCompleteOrderId }),
+  selectedConfirmReturnOrderId: null,
+  setSelectedConfirmReturnOrderId: (selectedConfirmReturnOrderId) => set({ selectedConfirmReturnOrderId }),
 }));

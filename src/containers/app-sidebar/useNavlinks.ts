@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { mdiAccountBoxOutline, mdiArchiveOutline } from "@mdi/js";
+import { mdiAccountBoxOutline, mdiArchiveOutline, mdiPackageVariantClosed } from "@mdi/js";
 
 type NavLinkItem =
   | {
@@ -8,9 +8,8 @@ type NavLinkItem =
       title: string;
       url: string;
       icon: string;
-      permissionKey: string;
     }
-  | { group: true; title: string; icon: string; children: { title: string; url: string; permissionKey: string }[] };
+  | { group: true; title: string; icon: string; children: { title: string; url: string }[] };
 
 export const useNavlinks = () => {
   const navLinks = useMemo(() => {
@@ -23,12 +22,10 @@ export const useNavlinks = () => {
           {
             title: "Customers",
             url: "/customers",
-            permissionKey: "customer_read",
           },
           {
             title: "API Keys",
             url: "/api-keys",
-            permissionKey: "DEV",
           },
         ],
       },
@@ -37,7 +34,12 @@ export const useNavlinks = () => {
         title: "Products",
         url: "/products",
         icon: mdiArchiveOutline,
-        permissionKey: "product_read",
+      },
+      {
+        group: false,
+        title: "Orders",
+        url: "/orders",
+        icon: mdiPackageVariantClosed,
       },
     ];
 

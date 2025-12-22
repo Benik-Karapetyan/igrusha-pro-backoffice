@@ -5,6 +5,7 @@ import { authRoute } from "./auth";
 import { checkEmailRoute } from "./check-email";
 import { customersRoute } from "./customers";
 import { mainRoute } from "./main";
+import { ordersRoute } from "./orders";
 import { productsRoute } from "./products";
 import { profileRoute } from "./profile";
 import { recoverPasswordRoute } from "./recover-password";
@@ -13,7 +14,7 @@ import { setPasswordRoute } from "./set-password";
 import { signInRoute } from "./sign-in";
 
 const routeTree = rootRoute.addChildren([
-  authRoute.addChildren([mainRoute, profileRoute, customersRoute, productsRoute]),
+  authRoute.addChildren([mainRoute, profileRoute, customersRoute, productsRoute, ordersRoute]),
   signInRoute,
   recoverPasswordRoute,
   checkEmailRoute,

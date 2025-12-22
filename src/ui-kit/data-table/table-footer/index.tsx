@@ -68,10 +68,10 @@ export const TableFooter: React.FC<TableFooterProps> = ({
             />
             <div className="-ml-2 flex items-center gap-x-4">
               <div className="flex">
-                <button disabled={page < 2} onClick={handleFirstPageClick}>
+                <button type="button" disabled={page < 2} onClick={handleFirstPageClick}>
                   <Icon name={mdiPageFirst} />
                 </button>
-                <button disabled={page < 2} onClick={handlePrevClick}>
+                <button type="button" disabled={page < 2} onClick={handlePrevClick}>
                   <Icon name={mdiChevronLeft} />
                 </button>
               </div>
@@ -81,10 +81,10 @@ export const TableFooter: React.FC<TableFooterProps> = ({
               </div>
 
               <div className="flex">
-                <button disabled={!pageCount || page === pageCount} onClick={handleNextClick}>
+                <button type="button" disabled={!pageCount || page === pageCount} onClick={handleNextClick}>
                   <Icon name={mdiChevronRight} />
                 </button>
-                <button disabled={!pageCount || page === pageCount} onClick={handleLastPageClick}>
+                <button type="button" disabled={!pageCount || page === pageCount} onClick={handleLastPageClick}>
                   <Icon name={mdiPageLast} />
                 </button>
               </div>

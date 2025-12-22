@@ -14,6 +14,10 @@ export const useProductHeaders = () => {
     setProduct({
       ...item,
       relatedProducts: Array.isArray(item.relatedProducts) ? item.relatedProducts.map((product) => product._id) : [],
+      gender: "unisex",
+      ageRange: {
+        from: 0,
+      },
     } as unknown as ProductFormValues);
     setDialogMode("update");
     setDrawerType("product");
@@ -27,7 +31,7 @@ export const useProductHeaders = () => {
   };
 
   const headers: HeaderItem[] = [
-    { text: "product id", value: "_id", width: 160, maxWidth: 160 },
+    { text: "product number", value: "productNumber", width: 160, maxWidth: 160 },
     {
       text: "product image",
       value: (item) =>
