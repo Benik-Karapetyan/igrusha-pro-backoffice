@@ -18,12 +18,10 @@ export const AppSidebar = () => {
         isAppSidebarMini ? "w-[56px]" : "w-[300px]"
       )}
     >
-      <div
-        className={cn("flex items-center", isAppSidebarMini ? "justify-center py-4" : "justify-between px-4 py-[7px]")}
-      >
+      <div className={cn("flex items-center", isAppSidebarMini ? "justify-center py-4" : "justify-between px-4 py-3")}>
         {!isAppSidebarMini && (
-          <Link to="/" className="p-2">
-            <img src="../../app-logo.svg" alt="app logo" className="h-[26px] w-[98.35px] object-contain" />
+          <Link to="/">
+            <img src="../../app-logo.png" alt="app logo" className="h-8 w-auto object-contain" />
           </Link>
         )}
 
