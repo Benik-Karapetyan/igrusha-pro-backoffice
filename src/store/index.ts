@@ -109,7 +109,7 @@ export const useStore = create<IStoreState>((set) => ({
     user: null,
   },
   setAuth: (auth) => set({ auth }),
-  isAppSidebarMini: true,
+  isAppSidebarMini: false,
   setIsAppSidebarMini: (isAppSidebarMini) => set({ isAppSidebarMini }),
   drawerOpen: false,
   setDrawerOpen: (drawerOpen) => set({ drawerOpen }),

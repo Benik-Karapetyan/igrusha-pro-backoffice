@@ -3,7 +3,6 @@ import { createRouter } from "@tanstack/react-router";
 import { rootRoute } from "./__root";
 import { authRoute } from "./auth";
 import { checkEmailRoute } from "./check-email";
-import { customersRoute } from "./customers";
 import { mainRoute } from "./main";
 import { ordersRoute } from "./orders";
 import { productsRoute } from "./products";
@@ -12,9 +11,10 @@ import { recoverPasswordRoute } from "./recover-password";
 import { resetPasswordRoute } from "./reset-password";
 import { setPasswordRoute } from "./set-password";
 import { signInRoute } from "./sign-in";
+import { usersRoute } from "./users";
 
 const routeTree = rootRoute.addChildren([
-  authRoute.addChildren([mainRoute, profileRoute, customersRoute, productsRoute, ordersRoute]),
+  authRoute.addChildren([mainRoute, profileRoute, usersRoute, productsRoute, ordersRoute]),
   signInRoute,
   recoverPasswordRoute,
   checkEmailRoute,

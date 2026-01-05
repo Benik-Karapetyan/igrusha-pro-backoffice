@@ -14,6 +14,7 @@ export const useProductHeaders = () => {
     setProduct({
       ...item,
       relatedProducts: Array.isArray(item.relatedProducts) ? item.relatedProducts.map((product) => product._id) : [],
+      ageRange: item.ageRange || { from: "", to: "" },
     } as unknown as ProductFormValues);
     setDialogMode("update");
     setDrawerType("product");

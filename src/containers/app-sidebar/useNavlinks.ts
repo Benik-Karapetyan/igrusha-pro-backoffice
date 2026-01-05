@@ -15,19 +15,10 @@ export const useNavlinks = () => {
   const navLinks = useMemo(() => {
     const allNavLinks: NavLinkItem[] = [
       {
-        group: true,
-        title: "Customer Management",
+        group: false,
+        title: "Users",
+        url: "/users",
         icon: mdiAccountBoxOutline,
-        children: [
-          {
-            title: "Customers",
-            url: "/customers",
-          },
-          {
-            title: "API Keys",
-            url: "/api-keys",
-          },
-        ],
       },
       {
         group: false,

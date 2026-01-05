@@ -1,5 +1,4 @@
 export * from "./check-email";
-export * from "./customers";
 export * from "./main";
 export * from "./orders";
 export * from "./products";
@@ -8,3 +7,4 @@ export * from "./recover-password";
 export * from "./reset-password";
 export * from "./set-password";
 export * from "./sign-in";
+export * from "./users";

@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { useStore } from "@store";
 import { Link } from "@tanstack/react-router";
 import { Button, Icon, NavLink, NavLinkGroup } from "@ui-kit";
@@ -10,6 +12,18 @@ export const AppSidebar = () => {
   const isAppSidebarMini = useStore((s) => s.isAppSidebarMini);
   const setIsAppSidebarMini = useStore((s) => s.setIsAppSidebarMini);
   const { navLinks } = useNavlinks();
+
+  const handleToggleSidebar = () => {
+    setIsAppSidebarMini(!isAppSidebarMini);
+    localStorage.setItem("isAppSidebarMini", isAppSidebarMini ? "false" : "true");
+  };
+
+  useEffect(() => {
+    const storedIsAppSidebarMini = localStorage.getItem("isAppSidebarMini");
+    if (storedIsAppSidebarMini) {
+      setIsAppSidebarMini(storedIsAppSidebarMini === "true");
+    }
+  }, [setIsAppSidebarMini]);
 
   return (
     <aside
@@ -25,7 +39,7 @@ export const AppSidebar = () => {
           </Link>
         )}
 
-        <Button variant="ghost" size="iconSmall" onClick={() => setIsAppSidebarMini(!isAppSidebarMini)}>
+        <Button variant="ghost" size="iconSmall" onClick={handleToggleSidebar}>
           <Icon name={sidebarMenuIcon} className={cn(isAppSidebarMini && "rotate-180")} />
         </Button>
       </div>
