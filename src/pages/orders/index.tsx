@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AppHeader, ConfirmDialog, TableContainer } from "@containers";
+import { ConfirmDialog } from "@components";
+import { AppHeader, TableContainer } from "@containers";
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
@@ -75,8 +76,6 @@ export const OrdersPage = () => {
 
       const { data } = await api.get("/orders", { params });
 
-      console.log("data", data.items);
-
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
@@ -98,7 +97,7 @@ export const OrdersPage = () => {
     <div>
       <AppHeader title="Orders" MainButton={<Button>Add Order</Button>} />
 
-      <TableContainer>
+      <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
           <DataTable headers={headers} items={items} loading={loading} hideFooter />
         </div>

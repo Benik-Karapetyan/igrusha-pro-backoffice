@@ -15,34 +15,6 @@ export const formatScientificToFullNumber = (value?: number | string) => {
   return new Big(value).toFixed();
 };
 
-export function timeAgo(timestamp: number): string {
-  const now = new Date();
-  const givenDate = new Date(timestamp);
-
-  const diffInMs = now.getTime() - givenDate.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  if (diffInDays === 0) return "Today";
-  if (diffInDays === 1) return "1 day ago";
-  if (diffInDays <= 6) return `${diffInDays} days ago`;
-  if (diffInDays <= 13) return "1 week ago";
-
-  const diffInWeeks = Math.floor(diffInDays / 7);
-  if (diffInWeeks === 4) return "1 month ago"; // Fix: Treat 4 weeks as 1 month
-  if (diffInWeeks < 4) return `${diffInWeeks} weeks ago`;
-
-  // Instead of dividing by 30, check if the given date is in the previous month
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
-  if (givenDate >= oneMonthAgo) return "1 month ago";
-
-  const diffInMonths = Math.floor(diffInDays / 30);
-  if (diffInMonths < 12) return `${diffInMonths} months ago`;
-
-  return givenDate.toLocaleDateString(); // Returns formatted date if older than a year
-}
-
 export const isDecimal = (num: number) => !Number.isInteger(num);
 
 export const getDecimalPlaces = (value: number) => {
@@ -73,9 +45,6 @@ export const formatAmount = (amount?: number) => {
 };
 
 export const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
-
-export const fillMissingNumbers = (arr: number[]): number[] =>
-  !arr || arr.length === 0 ? [] : Array.from({ length: Math.max(...arr) + 1 }, (_, i) => i);
 
 export function getPaginationRows(current: number, total: number): (number | string)[] {
   const center = [current - 2, current - 1, current, current + 1, current + 2],
@@ -121,4 +90,36 @@ export const getTimeDuration = (time: string) => {
   if (minutes) result += `${minutes} minute${minutes > 1 ? "s" : ""}`;
 
   return result;
+};
+
+export const formatCurrency = (value: number, currency: string = "AMD", locale: string = "hy-AM") => {
+  if (currency === "AMD") {
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? "-" : "";
+
+    const numberFormatter = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      useGrouping: true,
+    });
+
+    const parts = numberFormatter.formatToParts(1000);
+    const groupSeparator = parts.find((p) => p.type === "group")?.value ?? ",";
+
+    const formattedNumber = numberFormatter
+      .format(absValue)
+      .split(groupSeparator)
+      .join(" ")
+      .replace(/[\u00A0\u202F]/g, " ");
+
+    return `${sign}${formattedNumber} ֏`;
+  }
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
 };

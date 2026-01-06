@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { mdiAccountBoxOutline, mdiArchiveOutline, mdiPackageVariantClosed } from "@mdi/js";
+import { mdiAccountBoxOutline, mdiArchiveOutline, mdiFileDocumentMinusOutline, mdiPackageVariantClosed } from "@mdi/js";
 
 type NavLinkItem =
   | {
@@ -31,6 +31,12 @@ export const useNavlinks = () => {
         title: "Orders",
         url: "/orders",
         icon: mdiPackageVariantClosed,
+      },
+      {
+        group: false,
+        title: "Expenses",
+        url: "/expenses",
+        icon: mdiFileDocumentMinusOutline,
       },
     ];
 

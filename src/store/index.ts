@@ -1,4 +1,11 @@
-import { emptyProduct, emptyProfile, ProductFormValues, ProfileFormValues } from "@forms";
+import {
+  emptyExpense,
+  emptyProduct,
+  emptyProfile,
+  ExpenseFormValues,
+  ProductFormValues,
+  ProfileFormValues,
+} from "@forms";
 import { create } from "zustand";
 
 export type DialogTypes =
@@ -11,53 +18,29 @@ export type DialogTypes =
   | "resetPassword"
   | "profile"
   | "banCustomer"
-  | "closeCustomer"
-  | "product";
+  | "closeCustomer";
+
+export type DrawerTypes = "product" | "expense";
 
 export type DialogMode = "" | "create" | "update";
 
-interface IPermissionDetails {
-  id: number;
-  name: string;
-  key: string;
-  description: string;
-  status: number;
-}
-
-interface IPermission {
-  description: string;
-  permissions: IPermissionDetails[];
-}
-
-export interface IPermissionSection {
-  id: number;
-  parentId: number;
-  Name: string;
-  readPermissions: IPermission | null;
-  createPermissions: IPermission | null;
-  editPermissions: IPermission | null;
-  deletePermissions: IPermission | null;
-  exportPermissions: IPermission | null;
-  permissionTypeIds?: number[];
-  subPermissionSections?: IPermissionSection[];
-}
-
-export interface IRole {
-  id: number;
-  name: string;
-  description: string;
-  status: number;
-  permissionSections: IPermissionSection[];
+export interface IAddress {
+  street: string;
+  building: number;
+  entrance?: number;
+  floor?: number;
+  apartment: number;
+  zip?: string;
 }
 
 interface IUser {
-  id: number;
-  identityId: string;
-  name: string;
+  _id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
-  address: string;
-  userRoles: IRole[];
+  address: IAddress;
+  isAdmin: boolean;
 }
 
 export interface IAuth {
@@ -67,12 +50,6 @@ export interface IAuth {
   avatar?: string;
 }
 
-export interface IResetPasswordData {
-  email: string;
-  username: string;
-  phone: string;
-}
-
 interface IStoreState {
   auth: IAuth;
   setAuth: (value: IAuth) => void;
@@ -80,8 +57,8 @@ interface IStoreState {
   setIsAppSidebarMini: (value: boolean) => void;
   drawerOpen: boolean;
   setDrawerOpen: (value: boolean) => void;
-  drawerType: DialogTypes | null;
-  setDrawerType: (type: DialogTypes | null) => void;
+  drawerType: DrawerTypes | null;
+  setDrawerType: (type: DrawerTypes | null) => void;
   dialogs: DialogTypes[];
   setDialogs: (dialogs: DialogTypes[]) => void;
   dialogMode: DialogMode;
@@ -90,12 +67,14 @@ interface IStoreState {
   setHasUnsavedChanges: (value: boolean) => void;
   selectedIds: number[];
   setSelectedIds: (ids: number[]) => void;
-  product: ProductFormValues;
-  setProduct: (value: ProductFormValues) => void;
   profile: ProfileFormValues;
   setProfile: (value: ProfileFormValues) => void;
-  resetPasswordData: IResetPasswordData | null;
-  setResetPasswordData: (value: IResetPasswordData | null) => void;
+  product: ProductFormValues;
+  setProduct: (value: ProductFormValues) => void;
+  expense: ExpenseFormValues;
+  setExpense: (value: ExpenseFormValues) => void;
+  selectedExpenseId: string | null;
+  setSelectedExpenseId: (value: string | null) => void;
   selectedCompleteOrderId: string | null;
   setSelectedCompleteOrderId: (value: string | null) => void;
   selectedConfirmReturnOrderId: string | null;
@@ -123,12 +102,14 @@ export const useStore = create<IStoreState>((set) => ({
   setHasUnsavedChanges: (hasUnsavedChanges) => set({ hasUnsavedChanges }),
   selectedIds: [],
   setSelectedIds: (selectedIds) => set({ selectedIds }),
-  product: emptyProduct,
-  setProduct: (product) => set({ product }),
   profile: emptyProfile,
   setProfile: (profile) => set({ profile }),
-  resetPasswordData: null,
-  setResetPasswordData: (resetPasswordData) => set({ resetPasswordData }),
+  product: emptyProduct,
+  setProduct: (product) => set({ product }),
+  expense: emptyExpense,
+  setExpense: (expense) => set({ expense }),
+  selectedExpenseId: null,
+  setSelectedExpenseId: (selectedExpenseId) => set({ selectedExpenseId }),
   selectedCompleteOrderId: null,
   setSelectedCompleteOrderId: (selectedCompleteOrderId) => set({ selectedCompleteOrderId }),
   selectedConfirmReturnOrderId: null,

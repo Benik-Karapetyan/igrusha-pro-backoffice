@@ -33,7 +33,7 @@ export const ProductFormSchema = z.object({
       .positive("Min age must be greater than 0")
       .or(z.string().min(1, "Min age is required"))
       .or(z.literal(0)),
-    to: z.number().positive("Max age must be greater than 0").optional(),
+    to: z.number().positive("Max age must be greater than 0").or(z.literal("")).optional(),
   }),
   size: z
     .object({
@@ -44,9 +44,9 @@ export const ProductFormSchema = z.object({
     .optional(),
   boxSize: z
     .object({
-      length: z.number().positive("Length must be greater than 0").or(z.string().min(1, "Length is required")),
-      width: z.number().positive("Width must be greater than 0").or(z.string().min(1, "Width is required")),
-      height: z.number().positive("Height must be greater than 0").or(z.string().min(1, "Height is required")),
+      length: z.number().positive("Length must be greater than 0").or(z.literal("")).optional(),
+      width: z.number().positive("Width must be greater than 0").or(z.literal("")).optional(),
+      height: z.number().positive("Height must be greater than 0").or(z.literal("")).optional(),
     })
     .optional(),
   brand: z.string().optional(),
@@ -82,6 +82,17 @@ export const emptyProduct: ProductFormValues = {
   gender: "unisex",
   ageRange: {
     from: "",
+    to: "",
+  },
+  size: {
+    length: "",
+    width: "",
+    height: "",
+  },
+  boxSize: {
+    length: "",
+    width: "",
+    height: "",
   },
   rating: 0,
   reviewCount: 0,

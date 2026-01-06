@@ -103,7 +103,13 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         ...requestData,
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
-        numberInStock: requestData.numberInStock ? requestData.numberInStock : 0,
+        ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
+        boxSize: omit(
+          requestData.boxSize,
+          !requestData.boxSize?.length ? "length" : "",
+          !requestData.boxSize?.width ? "width" : "",
+          !requestData.boxSize?.height ? "height" : ""
+        ),
       });
 
       setDrawerType(null);
@@ -141,7 +147,13 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         ...omit(requestData, "_id", "productNumber", "updatedAt", "initialNumberInStock"),
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
-        numberInStock: requestData.numberInStock ? requestData.numberInStock : 0,
+        ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
+        boxSize: omit(
+          requestData.boxSize,
+          !requestData.boxSize?.length ? "length" : "",
+          !requestData.boxSize?.width ? "width" : "",
+          !requestData.boxSize?.height ? "height" : ""
+        ),
       });
 
       setDrawerType(null);
@@ -358,7 +370,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
           </div>
         </div>
 
-        <div className="flex items-end gap-4">
+        <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="sectionName">
               {({ name, state: { value, meta }, handleChange }) => (
@@ -407,138 +419,142 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
           </div>
         </div>
 
-        <Field name="ageRange">
-          {({ name, state: { value, meta }, handleChange }) => (
-            <div className="flex flex-col gap-2">
-              <Typography variant="heading-4" color="secondary">
-                Age Range
-              </Typography>
+        <div className="flex flex-col gap-2">
+          <Typography variant="heading-4" color="secondary">
+            Age Range
+          </Typography>
 
-              <div className="flex gap-4">
+          <div className="flex gap-4">
+            <Field name="ageRange.from">
+              {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
                   label="From"
                   placeholder="Enter from"
                   type="number"
                   name={name}
-                  value={value?.from}
+                  value={value}
                   errorMessage={meta.errors[0] || ""}
-                  onChange={({ target }) =>
-                    value ? handleChange({ ...value, from: target.value ? +target.value : "" }) : undefined
-                  }
+                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                 />
+              )}
+            </Field>
 
+            <Field name="ageRange.to">
+              {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
                   label="To"
                   placeholder="Enter to"
                   type="number"
                   name={name}
-                  value={value?.to}
+                  value={value}
                   errorMessage={meta.errors[0] || ""}
-                  onChange={({ target }) =>
-                    value ? handleChange({ ...value, to: target.value ? +target.value : undefined }) : undefined
-                  }
+                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                 />
-              </div>
-            </div>
-          )}
-        </Field>
+              )}
+            </Field>
+          </div>
+        </div>
 
         <div className="flex gap-4">
-          <Field name="size">
-            {({ name, state: { value, meta }, handleChange }) => (
-              <div className="flex flex-col gap-2">
-                <Typography variant="heading-4" color="secondary">
-                  Size
-                </Typography>
+          <div className="flex flex-col gap-2">
+            <Typography variant="heading-4" color="secondary">
+              Size
+            </Typography>
 
-                <div className="flex gap-4">
+            <div className="flex gap-4">
+              <Field name="size.length">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Length"
                     placeholder="Enter length"
                     type="number"
                     name={name}
-                    value={value?.length}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, length: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
+                )}
+              </Field>
 
+              <Field name="size.width">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Width"
                     placeholder="Enter width"
                     type="number"
                     name={name}
-                    value={value?.width}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, width: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
+                )}
+              </Field>
 
+              <Field name="size.height">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Height"
                     placeholder="Enter height"
                     type="number"
                     name={name}
-                    value={value?.height}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, height: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
-                </div>
-              </div>
-            )}
-          </Field>
+                )}
+              </Field>
+            </div>
+          </div>
 
-          <Field name="boxSize">
-            {({ name, state: { value, meta }, handleChange }) => (
-              <div className="flex flex-col gap-2">
-                <Typography variant="heading-4" color="secondary">
-                  Box Size
-                </Typography>
+          <div className="flex flex-col gap-2">
+            <Typography variant="heading-4" color="secondary">
+              Box Size
+            </Typography>
 
-                <div className="flex gap-4">
+            <div className="flex gap-4">
+              <Field name="boxSize.length">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Length"
                     placeholder="Enter length"
                     type="number"
                     name={name}
-                    value={value?.length}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, length: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
+                )}
+              </Field>
 
+              <Field name="boxSize.width">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Width"
                     placeholder="Enter width"
                     type="number"
                     name={name}
-                    value={value?.width}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, width: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
+                )}
+              </Field>
 
+              <Field name="boxSize.height">
+                {({ name, state: { value, meta }, handleChange }) => (
                   <TextField
                     label="Height"
                     placeholder="Enter height"
                     type="number"
                     name={name}
-                    value={value?.height}
+                    value={value}
                     errorMessage={meta.errors[0] || ""}
-                    onChange={({ target }) =>
-                      value ? handleChange({ ...value, height: target.value ? +target.value : "" }) : undefined
-                    }
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                   />
-                </div>
-              </div>
-            )}
-          </Field>
+                )}
+              </Field>
+            </div>
+          </div>
         </div>
 
         <Field name="isVariantOf">

@@ -1,4 +1,5 @@
 export * from "./check-email";
+export * from "./expenses";
 export * from "./main";
 export * from "./orders";
 export * from "./products";

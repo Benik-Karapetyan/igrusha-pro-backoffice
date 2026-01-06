@@ -1,40 +1,18 @@
 import { useState } from "react";
 
-// import { useToast } from "@hooks";
 import { mdiAccountCircleOutline, mdiDotsVertical, mdiLogout } from "@mdi/js";
-// import { api } from "@services";
 import { useStore } from "@store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, Icon, Skeleton } from "@ui-kit";
 import { cn } from "@utils";
 
-// import { isAxiosError } from "axios";
-
 export const UserProfile = () => {
   const navigate = useNavigate();
-  // const toast = useToast();
   const isAppSidebarMini = useStore((s) => s.isAppSidebarMini);
   const auth = useStore((s) => s.auth);
   const { isLoading, user, avatar } = auth;
   const setAuth = useStore((s) => s.setAuth);
-  // const canFetch = useRef(true);
   const [open, setOpen] = useState(false);
-  // const [isAvatarLoading, setIsAvatarLoading] = useState(true);
-
-  // const getAvatar = useCallback(async () => {
-  //   try {
-  //     setIsAvatarLoading(true);
-
-  //     const { data: avatarData } = await api.get(`/bo/api/users/profilePicture/${user?.id}`);
-  //     setAuth({ ...auth, avatar: `data:image/png;base64,${avatarData.base64Image}` });
-  //   } catch (err) {
-  //     if (isAxiosError(err) && err.status !== 404) {
-  //       toast.error(err.response?.data);
-  //     }
-  //   } finally {
-  //     setIsAvatarLoading(false);
-  //   }
-  // }, [auth, setAuth, user?.id, toast]);
 
   const logout = () => {
     setAuth({ isLoading: true, check: false, user: null });
@@ -43,13 +21,6 @@ export const UserProfile = () => {
     navigate({ to: "/sign-in", reloadDocument: true });
     setAuth({ isLoading: false, check: false, user: null });
   };
-
-  // useEffect(() => {
-  //   if (canFetch.current && user?.id) {
-  //     canFetch.current = false;
-  //     void getAvatar();
-  //   }
-  // }, [user?.id, getAvatar]);
 
   return (
     <div
@@ -78,7 +49,9 @@ export const UserProfile = () => {
               </div>
             ) : (
               <div>
-                <div className="flex items-center text-xs">{user?.name}</div>
+                <div className="flex items-center text-xs">
+                  {user?.firstName} {user?.lastName}
+                </div>
                 <div className="flex gap-1 text-xs text-foreground-muted-more">Admin</div>
               </div>
             )}

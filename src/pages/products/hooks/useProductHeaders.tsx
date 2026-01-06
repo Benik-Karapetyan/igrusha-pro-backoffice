@@ -3,6 +3,7 @@ import { ProductFormValues } from "@forms";
 import { mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { HeaderItem, Icon, TableItem } from "@ui-kit";
+import { formatCurrency } from "@utils";
 
 export const useProductHeaders = () => {
   const setDialogs = useStore((s) => s.setDialogs);
@@ -14,7 +15,13 @@ export const useProductHeaders = () => {
     setProduct({
       ...item,
       relatedProducts: Array.isArray(item.relatedProducts) ? item.relatedProducts.map((product) => product._id) : [],
-      ageRange: item.ageRange || { from: "", to: "" },
+      ageRange: item.ageRange
+        ? (item.ageRange as { to?: number }).to
+          ? item.ageRange
+          : { from: (item.ageRange as { from: number }).from, to: "" }
+        : { from: "", to: "" },
+      size: item.size || { length: "", width: "", height: "" },
+      boxSize: item.boxSize || { length: "", width: "", height: "" },
     } as unknown as ProductFormValues);
     setDialogMode("update");
     setDrawerType("product");
@@ -80,7 +87,7 @@ export const useProductHeaders = () => {
     },
     {
       text: "price",
-      value: "price",
+      value: (item) => (typeof item.price === "number" ? formatCurrency(item.price) : <Icon name={mdiMinus} dense />),
     },
     {
       text: "discount",

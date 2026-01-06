@@ -4,10 +4,11 @@ import { useStore } from "@store";
 import { cn } from "@utils";
 
 interface TableContainerProps {
+  itemsLength: number;
   className?: string;
 }
 
-export const TableContainer = ({ children, className }: PropsWithChildren<TableContainerProps>) => {
+export const TableContainer = ({ children, itemsLength, className }: PropsWithChildren<TableContainerProps>) => {
   const isAppSidebarMini = useStore((s) => s.isAppSidebarMini);
   const [hasScroll, setHasScroll] = useState(false);
 
@@ -26,7 +27,7 @@ export const TableContainer = ({ children, className }: PropsWithChildren<TableC
     window.addEventListener("resize", checkScroll);
 
     return () => window.removeEventListener("resize", checkScroll);
-  }, []);
+  }, [itemsLength]);
 
   return (
     <div className="p-4" style={{ maxWidth }}>

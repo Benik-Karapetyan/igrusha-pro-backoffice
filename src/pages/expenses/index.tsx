@@ -1,15 +1,17 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AppHeader, TableContainer } from "@containers";
+import { AppDrawer, AppHeader, DeleteExpenseDialog, TableContainer } from "@containers";
+import { emptyExpense, ExpenseForm } from "@forms";
 import { api } from "@services";
-import { DataTable, Icon, TableFooter, TextField } from "@ui-kit";
-import { searchIcon } from "@utils";
-import { debounce } from "lodash";
+import { useStore } from "@store";
+import { useNavigate } from "@tanstack/react-router";
+import { Button, DataTable, TableFooter } from "@ui-kit";
 
-import { useUserHeaders } from "./hooks/useUserHeaders";
+import { useExpenseHeaders } from "./hooks/useExpenseHeaders";
 
-export const UsersPage = () => {
-  const { headers } = useUserHeaders();
+export const ExpensesPage = () => {
+  const navigate = useNavigate();
+  const { headers } = useExpenseHeaders();
   const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
@@ -19,19 +21,10 @@ export const UsersPage = () => {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
-
-  const debouncedSearchTermChange = useRef(
-    debounce((searchTerm: string) => {
-      setParams((prev) => ({ ...prev, searchTerm }));
-      canFetch.current = true;
-    }, 500)
-  ).current;
-
-  const handleSearchChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(value);
-    debouncedSearchTermChange(value);
-  };
+  const drawerType = useStore((s) => s.drawerType);
+  const setDrawerType = useStore((s) => s.setDrawerType);
+  const setDialogMode = useStore((s) => s.setDialogMode);
+  const setExpense = useStore((s) => s.setExpense);
 
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
@@ -43,11 +36,17 @@ export const UsersPage = () => {
     canFetch.current = true;
   };
 
-  const getUsers = useCallback(async () => {
+  const handleAddClick = () => {
+    setExpense(emptyExpense);
+    setDialogMode("create");
+    setDrawerType("expense");
+  };
+
+  const getExpenses = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/users", { params });
+      const { data } = await api.get("/expenses", { params });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
@@ -62,24 +61,13 @@ export const UsersPage = () => {
   useEffect(() => {
     if (canFetch.current) {
       canFetch.current = false;
-      void getUsers();
+      void getExpenses();
     }
-  }, [getUsers]);
+  }, [navigate, getExpenses]);
 
   return (
     <div>
-      <AppHeader title="Users" />
-
-      <div className="flex items-center justify-between p-4 pb-0">
-        <TextField
-          value={searchValue}
-          placeholder="Search by UID, Full Name, Email"
-          className="w-[222px]"
-          hideDetails
-          prependInner={<Icon name={searchIcon} className="mr-2" />}
-          onChange={handleSearchChange}
-        />
-      </div>
+      <AppHeader title="Expenses" MainButton={<Button onClick={handleAddClick}>Add Expense</Button>} />
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
@@ -98,6 +86,12 @@ export const UsersPage = () => {
           />
         </table>
       </TableContainer>
+
+      <AppDrawer open={drawerType === "expense"} onOpenChange={(open) => setDrawerType(open ? "expense" : null)}>
+        <ExpenseForm onSuccess={getExpenses} />
+      </AppDrawer>
+
+      <DeleteExpenseDialog onSuccess={getExpenses} />
     </div>
   );
 };

@@ -48,8 +48,6 @@ export const ProductsPage = () => {
 
       const { data } = await api.get("/products", { params });
 
-      console.log("data", data.items);
-
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
@@ -71,7 +69,7 @@ export const ProductsPage = () => {
     <div>
       <AppHeader title="Products" MainButton={<Button onClick={handleAddClick}>Add Product</Button>} />
 
-      <TableContainer>
+      <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
           <DataTable headers={headers} items={items} loading={loading} hideFooter />
         </div>
