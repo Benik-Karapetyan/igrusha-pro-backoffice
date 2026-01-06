@@ -12,7 +12,6 @@ export * from "./unsaved-changes-dialog";
 export * from "./filters-dialog";
 export * from "./create-update-dialog";
 export * from "./delete-dialog";
-export * from "./reset-password-dialog";
 export * from "./phone-input";
 export * from "./user-profile";
 export * from "./copy-to-clipboard";
