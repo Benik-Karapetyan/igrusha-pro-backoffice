@@ -36,6 +36,9 @@ export interface TypographyColors {
   disabled: "text-foreground-disabled";
   inverse: "text-foreground-inverse";
   link: "text-primary";
+  success: "text-success-primary";
+  warning: "text-warning-primary";
+  error: "text-error-primary";
 }
 
 export const typographyColors: TypographyColors = {
@@ -44,4 +47,7 @@ export const typographyColors: TypographyColors = {
   disabled: "text-foreground-disabled",
   inverse: "text-foreground-inverse",
   link: "text-primary",
+  success: "text-success-primary",
+  warning: "text-warning-primary",
+  error: "text-error-primary",
 };
