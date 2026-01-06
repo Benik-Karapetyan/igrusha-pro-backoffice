@@ -104,7 +104,7 @@ export const ExpensesPage = () => {
     <div>
       <AppHeader title="Expenses" MainButton={<Button onClick={handleAddClick}>Add Expense</Button>} />
 
-      <div className="flex gap-4 p-4">
+      <div className="flex gap-4 p-4 pb-0">
         <div className="w-[250px]">
           <Autocomplete
             placeholder="Expense Types"
