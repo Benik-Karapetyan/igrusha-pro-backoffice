@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { AppHeader, TableContainer } from "@containers";
 import { api } from "@services";
-import { DataTable, Icon, TableFooter, TextField } from "@ui-kit";
+import { Button, DataTable, Icon, TableFooter, TextField } from "@ui-kit";
 import { searchIcon } from "@utils";
 import { debounce } from "lodash";
 
@@ -66,9 +66,63 @@ export const UsersPage = () => {
     }
   }, [getUsers]);
 
+  const handleAddFacebookUserClick = async () => {
+    try {
+      await api.post("/users", {
+        firstName: "Order From",
+        lastName: "Facebook",
+        email: "benik.karapetyan1+1@gmail.com",
+        phone: "+37491006262",
+        password: "Benik006262$",
+        addresses: [],
+        termsAndConditions: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddInstagramUserClick = async () => {
+    try {
+      await api.post("/users", {
+        firstName: "Order From",
+        lastName: "Instagram",
+        email: "benik.karapetyan1+2@gmail.com",
+        phone: "+37491006262",
+        password: "Benik006262$",
+        addresses: [],
+        termsAndConditions: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddPhoneUserClick = async () => {
+    try {
+      await api.post("/users", {
+        firstName: "Order From",
+        lastName: "Phone",
+        email: "benik.karapetyan1+3@gmail.com",
+        phone: "+37491006262",
+        password: "Benik006262$",
+        addresses: [],
+        termsAndConditions: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
-      <AppHeader title="Users" />
+      <AppHeader
+        title="Users"
+        MainButton={<Button onClick={handleAddFacebookUserClick}>Add Facebook User</Button>}
+        SecondaryButton={<Button onClick={handleAddInstagramUserClick}>Add Instagram User</Button>}
+      />
+
+      <Button onClick={handleAddPhoneUserClick}>Add Phone User</Button>
 
       <div className="flex items-center justify-between p-4 pb-0">
         <TextField
