@@ -14,7 +14,7 @@ export const TableContainer = ({ children, itemsLength, className }: PropsWithCh
 
   const maxWidth = useMemo(() => {
     const scrollWidth = hasScroll ? 7 : 0;
-    return isAppSidebarMini ? `calc(100vw - ${56 + scrollWidth}px)` : `calc(100vw - ${302 + scrollWidth}px)`;
+    return isAppSidebarMini ? `calc(100vw - ${58 + scrollWidth}px)` : `calc(100vw - ${302 + scrollWidth}px)`;
   }, [isAppSidebarMini, hasScroll]);
 
   useEffect(() => {

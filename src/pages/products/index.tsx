@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AppDrawer, AppHeader, DeleteDialog, TableContainer, UnsavedChangesDialog } from "@containers";
-import { emptyProduct, ProductForm } from "@forms";
+import { emptyProduct, OrderForm, ProductForm } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
@@ -93,6 +93,10 @@ export const ProductsPage = () => {
         size="xl"
       >
         <ProductForm onSuccess={getProducts} />
+      </AppDrawer>
+
+      <AppDrawer open={drawerType === "order"} onOpenChange={(open) => setDrawerType(open ? "order" : null)} size="lg">
+        <OrderForm onSuccess={getProducts} />
       </AppDrawer>
 
       <UnsavedChangesDialog />

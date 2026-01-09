@@ -6,8 +6,8 @@ import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
-import { Button, DataTable, TableFooter } from "@ui-kit";
-import { getErrorMessage } from "@utils";
+import { Button, DataTable, TableFooter, Typography } from "@ui-kit";
+import { formatCurrency, getErrorMessage } from "@utils";
 
 import { useOrderHeaders } from "./hooks/useOrderHeaders";
 
@@ -24,6 +24,7 @@ export const OrdersPage = () => {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
   const selectedCompleteOrderId = useStore((s) => s.selectedCompleteOrderId);
   const setSelectedCompleteOrderId = useStore((s) => s.setSelectedCompleteOrderId);
   const [actionLoading, setActionLoading] = useState(false);
@@ -79,6 +80,7 @@ export const OrdersPage = () => {
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
+      setTotalAmount(data.totalAmount);
     } catch (err) {
       console.error(err);
     } finally {
@@ -114,6 +116,15 @@ export const OrdersPage = () => {
           />
         </table>
       </TableContainer>
+
+      <div className="px-4">
+        <div className="flex justify-end gap-3 border bg-white px-6 py-4">
+          <Typography variant="body-lg">Total Amount For Given Period:</Typography>
+          <Typography variant="body-lg" color="success">
+            {formatCurrency(totalAmount)}
+          </Typography>
+        </div>
+      </div>
 
       <ConfirmDialog
         open={!!selectedCompleteOrderId || !!selectedConfirmReturnOrderId}

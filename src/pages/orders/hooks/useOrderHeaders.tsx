@@ -3,6 +3,8 @@ import { mdiCancel, mdiCheck, mdiKeyboardReturn, mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { ENUM_ORDER_STATUS } from "@types";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
+import { formatCurrency } from "@utils";
+import { format } from "date-fns";
 
 export const useOrderHeaders = () => {
   const setSelectedCompleteOrderId = useStore((s) => s.setSelectedCompleteOrderId);
@@ -43,21 +45,47 @@ export const useOrderHeaders = () => {
     },
     {
       text: "total amount",
-      value: "totalAmount",
+      value: (item) =>
+        typeof item.totalAmount === "number" ? formatCurrency(item.totalAmount) : <Icon name={mdiMinus} dense />,
     },
     {
       text: "delivery to",
       value: (item) =>
-        typeof item.userId === "object" && typeof item.userId.address === "object" ? (
+        typeof item.userId === "object" ? (
           <div>
             <div>{`${item.userId.firstName} ${item.userId.lastName}`}</div>
-            <div>{`${item.userId.address.street} ${item.userId.address.building}, ${item.userId.address.apartment ? `app ${item.userId.address.apartment}` : ""}`}</div>
+            {typeof item.userId.address === "object" && (
+              <div>
+                {`${item.userId.address.street} ${item.userId.address.building}, ${item.userId.address.apartment ? `app ${item.userId.address.apartment}` : ""}`}
+              </div>
+            )}
           </div>
         ) : (
           <Icon name={mdiMinus} dense />
         ),
     },
-    { text: "payment method", value: "paymentMethod" },
+    {
+      text: "created at",
+      value: (item) =>
+        typeof item.createdAt === "string" ? (
+          format(item.createdAt, "dd.MM.yyyy HH:mm")
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
+      text: "delivered at",
+      value: (item) =>
+        typeof item.deliveredAt === "string" ? (
+          format(item.deliveredAt, "dd.MM.yyyy HH:mm")
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
+      text: "payment method",
+      value: (item) => (typeof item.paymentMethod === "string" ? item.paymentMethod : <Icon name={mdiMinus} dense />),
+    },
     {
       text: "",
       value: (item) => (

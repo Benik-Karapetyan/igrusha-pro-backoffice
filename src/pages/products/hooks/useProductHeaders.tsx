@@ -1,15 +1,35 @@
-import { TableActionsCell, TableSwitchCell } from "@containers";
-import { ProductFormValues } from "@forms";
-import { mdiMinus } from "@mdi/js";
+import { TableSwitchCell } from "@containers";
+import { emptyOrder, ProductFormValues } from "@forms";
+import { mdiMinus, mdiPackageVariantClosedPlus } from "@mdi/js";
 import { useStore } from "@store";
-import { HeaderItem, Icon, TableItem } from "@ui-kit";
-import { formatCurrency } from "@utils";
+import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
+import { deleteIcon, editIcon, formatCurrency } from "@utils";
 
 export const useProductHeaders = () => {
   const setDialogs = useStore((s) => s.setDialogs);
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
+  const setOrder = useStore((s) => s.setOrder);
+
+  const handleOrderClick = (item: TableItem) => {
+    console.log(item);
+    setOrder({
+      ...emptyOrder,
+      items: [
+        {
+          productId: item._id as string,
+          image: (item.gallery as unknown as string[])[0] as string,
+          quantity: 1,
+          price: item.price as number,
+          finalPrice: "",
+          discount: item.discount as number,
+        },
+      ],
+    });
+    setDialogMode("create");
+    setDrawerType("order");
+  };
 
   const handleEdit = (item: TableItem) => {
     setProduct({
@@ -108,7 +128,19 @@ export const useProductHeaders = () => {
     {
       text: "",
       value: (item) => (
-        <TableActionsCell actions={["edit", "delete"]} item={item} onEdit={handleEdit} onDelete={handleDelete} />
+        <div className="flex justify-end gap-3 p-1">
+          <Button variant="ghost" size="iconSmall" onClick={() => handleOrderClick(item)}>
+            <Icon name={mdiPackageVariantClosedPlus} color="icon-primary" />
+          </Button>
+
+          <Button variant="ghost" size="iconSmall" onClick={() => handleEdit(item)}>
+            <Icon name={editIcon} color="icon-primary" />
+          </Button>
+
+          <Button variant="ghost" size="iconSmall" onClick={() => handleDelete(item)}>
+            <Icon name={deleteIcon} color="icon-error" />
+          </Button>
+        </div>
       ),
       width: 80,
     },

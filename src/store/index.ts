@@ -1,8 +1,10 @@
 import {
   emptyExpense,
+  emptyOrder,
   emptyProduct,
   emptyProfile,
   ExpenseFormValues,
+  OrderFormValues,
   ProductFormValues,
   ProfileFormValues,
 } from "@forms";
@@ -20,7 +22,7 @@ export type DialogTypes =
   | "banCustomer"
   | "closeCustomer";
 
-export type DrawerTypes = "product" | "expense";
+export type DrawerTypes = "product" | "expense" | "order";
 
 export type DialogMode = "" | "create" | "update";
 
@@ -71,6 +73,8 @@ interface IStoreState {
   setProfile: (value: ProfileFormValues) => void;
   product: ProductFormValues;
   setProduct: (value: ProductFormValues) => void;
+  order: OrderFormValues;
+  setOrder: (value: OrderFormValues) => void;
   expense: ExpenseFormValues;
   setExpense: (value: ExpenseFormValues) => void;
   selectedExpenseId: string | null;
@@ -106,6 +110,8 @@ export const useStore = create<IStoreState>((set) => ({
   setProfile: (profile) => set({ profile }),
   product: emptyProduct,
   setProduct: (product) => set({ product }),
+  order: emptyOrder,
+  setOrder: (order) => set({ order }),
   expense: emptyExpense,
   setExpense: (expense) => set({ expense }),
   selectedExpenseId: null,

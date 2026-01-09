@@ -123,3 +123,17 @@ export const formatCurrency = (value: number, currency: string = "AMD", locale: 
     maximumFractionDigits: 0,
   }).format(value);
 };
+
+/**
+ * Calculates the discount percentage based on original and final amounts
+ * @param finalAmount - The final/discounted amount
+ * @param originalAmount - The original amount before discount
+ * @returns The discount percentage (e.g., 10 for 10% discount)
+ */
+export const calculateDiscountPercentage = (finalAmount: number, originalAmount: number): number => {
+  if (originalAmount === 0) return 0;
+  if (finalAmount >= originalAmount) return 0;
+
+  const discount = ((originalAmount - finalAmount) / originalAmount) * 100;
+  return Math.round(discount * 100) / 100; // Round to 2 decimal places
+};
