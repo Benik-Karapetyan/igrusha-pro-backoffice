@@ -144,7 +144,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       }
 
       await api.put(`/products/${defaultValues._id}`, {
-        ...omit(requestData, "_id", "productNumber", "updatedAt", "initialNumberInStock"),
+        ...omit(requestData, "_id", "productNumber", "updatedAt", "initialNumberInStock", "variants"),
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
