@@ -87,6 +87,10 @@ export const useOrderHeaders = () => {
       value: (item) => (typeof item.paymentMethod === "string" ? item.paymentMethod : <Icon name={mdiMinus} dense />),
     },
     {
+      text: "order instructions",
+      value: "orderInstructions",
+    },
+    {
       text: "",
       value: (item) => (
         <div className="flex justify-end gap-3 p-1">
