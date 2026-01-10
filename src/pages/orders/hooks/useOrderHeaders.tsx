@@ -67,20 +67,12 @@ export const useOrderHeaders = () => {
     {
       text: "created at",
       value: (item) =>
-        typeof item.createdAt === "string" ? (
-          format(item.createdAt, "dd.MM.yyyy HH:mm")
-        ) : (
-          <Icon name={mdiMinus} dense />
-        ),
+        typeof item.createdAt === "string" ? format(item.createdAt, "dd.MM.yyyy ") : <Icon name={mdiMinus} dense />,
     },
     {
       text: "delivered at",
       value: (item) =>
-        typeof item.deliveredAt === "string" ? (
-          format(item.deliveredAt, "dd.MM.yyyy HH:mm")
-        ) : (
-          <Icon name={mdiMinus} dense />
-        ),
+        typeof item.deliveredAt === "string" ? format(item.deliveredAt, "dd.MM.yyyy") : <Icon name={mdiMinus} dense />,
     },
     {
       text: "payment method",
