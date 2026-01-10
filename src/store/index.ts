@@ -75,6 +75,8 @@ interface IStoreState {
   setProduct: (value: ProductFormValues) => void;
   order: OrderFormValues;
   setOrder: (value: OrderFormValues) => void;
+  selectedOrderId: string | null;
+  setSelectedOrderId: (value: string | null) => void;
   expense: ExpenseFormValues;
   setExpense: (value: ExpenseFormValues) => void;
   selectedExpenseId: string | null;
@@ -112,6 +114,8 @@ export const useStore = create<IStoreState>((set) => ({
   setProduct: (product) => set({ product }),
   order: emptyOrder,
   setOrder: (order) => set({ order }),
+  selectedOrderId: null,
+  setSelectedOrderId: (selectedOrderId) => set({ selectedOrderId }),
   expense: emptyExpense,
   setExpense: (expense) => set({ expense }),
   selectedExpenseId: null,

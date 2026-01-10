@@ -58,6 +58,8 @@ export const VariantOfProducts = ({
 
   const getVariantOfProducts = useCallback(async () => {
     try {
+      setLoading(true);
+
       const { data } = await api.get("/products", {
         params: {
           page: params.page,
@@ -80,11 +82,7 @@ export const VariantOfProducts = ({
     void getVariantOfProducts();
   }, [getVariantOfProducts]);
 
-  return loading ? (
-    <div className="flex items-center justify-center">
-      <ProgressCircular indeterminate />
-    </div>
-  ) : (
+  return (
     <div className="flex flex-col gap-4">
       <div className="w-[calc(100%_/_3_-_0.68rem)]">
         <TextField
@@ -98,21 +96,27 @@ export const VariantOfProducts = ({
         />
       </div>
 
-      <div className="flex flex-col">
-        {isVariantOfProducts.map((product) => (
-          <div
-            key={product._id}
-            className={cn(
-              "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
-              value === product._id && "border border-primary bg-background-default"
-            )}
-            onClick={() => handleChange(product._id)}
-          >
-            <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
-            <Typography>{product.name.en}</Typography>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center text-primary">
+          <ProgressCircular indeterminate />
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          {isVariantOfProducts.map((product) => (
+            <div
+              key={product._id}
+              className={cn(
+                "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
+                value === product._id && "border border-primary bg-background-default"
+              )}
+              onClick={() => handleChange(product._id)}
+            >
+              <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
+              <Typography>{product.name.en}</Typography>
+            </div>
+          ))}
+        </div>
+      )}
 
       <TableFooter
         headersLength={headersLength}

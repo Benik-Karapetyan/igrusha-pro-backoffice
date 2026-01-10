@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConfirmDialog } from "@components";
-import { AppHeader, TableContainer } from "@containers";
+import { AppDrawer, AppHeader, DeleteOrderDialog, RangePickerDialog, TableContainer } from "@containers";
+import { emptyOrder, OrderForm, orderStatuses } from "@forms";
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
-import { Button, DataTable, TableFooter, Typography } from "@ui-kit";
-import { formatCurrency, getErrorMessage } from "@utils";
+import { ENUM_ORDER_STATUS } from "@types";
+import { Autocomplete, Button, DataTable, Icon, TableFooter, TextField, Typography } from "@ui-kit";
+import { calendarIcon, formatCurrency, getErrorMessage } from "@utils";
 
 import { useOrderHeaders } from "./hooks/useOrderHeaders";
 
@@ -18,13 +20,22 @@ export const OrdersPage = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
+    statuses: [] as ENUM_ORDER_STATUS[],
+    from: "",
+    to: "",
   });
+  const [dates, setDates] = useState<string[]>([]);
+  const [datesOpen, setDatesOpen] = useState(false);
   const canFetch = useRef(true);
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
+  const drawerType = useStore((s) => s.drawerType);
+  const setDrawerType = useStore((s) => s.setDrawerType);
+  const setDialogMode = useStore((s) => s.setDialogMode);
+  const setOrder = useStore((s) => s.setOrder);
   const selectedCompleteOrderId = useStore((s) => s.selectedCompleteOrderId);
   const setSelectedCompleteOrderId = useStore((s) => s.setSelectedCompleteOrderId);
   const [actionLoading, setActionLoading] = useState(false);
@@ -39,6 +50,24 @@ export const OrdersPage = () => {
   const handlePerPageChange = (pageSize: string | number) => {
     setParams((prev) => ({ ...prev, pageSize: +pageSize }));
     canFetch.current = true;
+  };
+
+  const handleStatusesChange = (statuses: ENUM_ORDER_STATUS[]) => {
+    setParams((prev) => ({ ...prev, statuses }));
+    canFetch.current = true;
+  };
+
+  const handleDatesChange = (dates: string[]) => {
+    setDates(dates);
+    setDatesOpen(false);
+    setParams((prev) => ({ ...prev, from: dates[0], to: dates[1] }));
+    canFetch.current = true;
+  };
+
+  const handleAddClick = () => {
+    setOrder(emptyOrder);
+    setDialogMode("create");
+    setDrawerType("order");
   };
 
   const completeOrder = async () => {
@@ -75,7 +104,21 @@ export const OrdersPage = () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/orders", { params });
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", params.page.toString());
+      queryParams.append("pageSize", params.pageSize.toString());
+      if (params.statuses.length) {
+        params.statuses.forEach((status) => {
+          queryParams.append("statuses", status);
+        });
+      }
+
+      if (params.from && params.to) {
+        queryParams.append("from", params.from);
+        queryParams.append("to", params.to);
+      }
+
+      const { data } = await api.get("/orders", { params: queryParams });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
@@ -97,7 +140,42 @@ export const OrdersPage = () => {
 
   return (
     <div>
-      <AppHeader title="Orders" MainButton={<Button>Add Order</Button>} />
+      <AppHeader title="Orders" MainButton={<Button onClick={handleAddClick}>Add Order</Button>} />
+
+      <div className="flex gap-4 p-4 pb-0">
+        <div className="w-[250px]">
+          <Autocomplete
+            placeholder="Order Status"
+            selectedItems={params.statuses}
+            items={orderStatuses}
+            hasSearch={false}
+            onChange={handleStatusesChange}
+          />
+        </div>
+
+        <div className="w-[250px]">
+          <TextField
+            placeholder="DD.MM.YYYY  DD.MM.YYYY"
+            value={dates.length ? `${dates[0]} - ${dates[1]}` : ""}
+            readOnly
+            hideDetails
+            appendInner={<Icon name={calendarIcon} />}
+            onClick={() => setDatesOpen(true)}
+          />
+
+          <RangePickerDialog
+            title="Expense Creation Date"
+            open={datesOpen}
+            onOpenChange={setDatesOpen}
+            value={dates}
+            onConfirm={(val) => {
+              if (Array.isArray(val)) {
+                handleDatesChange(val);
+              }
+            }}
+          />
+        </div>
+      </div>
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
@@ -126,6 +204,10 @@ export const OrdersPage = () => {
         </div>
       </div>
 
+      <AppDrawer open={drawerType === "order"} onOpenChange={(open) => setDrawerType(open ? "order" : null)} size="lg">
+        <OrderForm onSuccess={getOrders} />
+      </AppDrawer>
+
       <ConfirmDialog
         open={!!selectedCompleteOrderId || !!selectedConfirmReturnOrderId}
         onOpenChange={() => {
@@ -145,6 +227,8 @@ export const OrdersPage = () => {
         loading={actionLoading}
         onConfirm={selectedCompleteOrderId ? completeOrder : confirmReturn}
       />
+
+      <DeleteOrderDialog onSuccess={getOrders} />
     </div>
   );
 };

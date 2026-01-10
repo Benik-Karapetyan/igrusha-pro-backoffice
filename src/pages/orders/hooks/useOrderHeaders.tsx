@@ -3,12 +3,13 @@ import { mdiCancel, mdiCheck, mdiKeyboardReturn, mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { ENUM_ORDER_STATUS } from "@types";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
-import { formatCurrency } from "@utils";
+import { deleteIcon, formatCurrency } from "@utils";
 import { format } from "date-fns";
 
 export const useOrderHeaders = () => {
   const setSelectedCompleteOrderId = useStore((s) => s.setSelectedCompleteOrderId);
   const setSelectedConfirmReturnOrderId = useStore((s) => s.setSelectedConfirmReturnOrderId);
+  const setSelectedOrderId = useStore((s) => s.setSelectedOrderId);
 
   const handleCompleteOrder = (item: TableItem) => {
     setSelectedCompleteOrderId(item._id as string);
@@ -112,6 +113,10 @@ export const useOrderHeaders = () => {
               <Icon name={mdiKeyboardReturn} color="icon-error" dense />
             </Button>
           )}
+
+          <Button variant="ghost" size="iconSmall" onClick={() => setSelectedOrderId(item._id as string)}>
+            <Icon name={deleteIcon} color="icon-error" />
+          </Button>
         </div>
       ),
       width: 80,

@@ -1,15 +1,27 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
 import { ENUM_ORDER_PAYMENT_METHOD } from "@types";
-import { Button, Calendar, DrawerFooter, DrawerHeader, DrawerTitle, Select, Textarea, TextField } from "@ui-kit";
+import {
+  Button,
+  Calendar,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Select,
+  Textarea,
+  TextField,
+  Typography,
+} from "@ui-kit";
 import { calculateDiscountPercentage, getErrorMessage } from "@utils";
 import { isEqual, omit } from "lodash";
 
+import { ProductFormValues } from "../product-form/product-form.consts";
 import { OrderFormSchema, OrderFormValues, paymentMethods } from "./order-form.consts";
+import { OrderProducts } from "./order-products";
 
 interface OrderFormProps {
   onSuccess: () => void;
@@ -35,6 +47,7 @@ export const OrderForm: FC<OrderFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
+  const [orderProducts, setOrderProducts] = useState<ProductFormValues[]>([]);
 
   const handleClose = () => {
     if (hasUnsavedChanges) setDialogs(["unsavedChanges"]);
@@ -112,6 +125,25 @@ export const OrderForm: FC<OrderFormProps> = ({ onSuccess }) => {
     }
   };
 
+  useEffect(() => {
+    form.setFieldValue("items", [
+      ...orderProducts.map((item) => ({
+        productId: item._id as string,
+        image: item.gallery[0],
+        quantity: 1,
+        price: item.price as number,
+        finalPrice: "" as const,
+        discount: item.discount,
+      })),
+    ]);
+    form.setFieldMeta("items", (prev) => ({
+      ...prev,
+      errors: [],
+      errorMap: {},
+    }));
+    form.validateField("items", "change");
+  }, [defaultValues.items, orderProducts, form]);
+
   return (
     <form className="h-full" onChange={handleChange} onSubmit={handleSubmit}>
       <DrawerHeader>
@@ -161,51 +193,67 @@ export const OrderForm: FC<OrderFormProps> = ({ onSuccess }) => {
         </Field>
 
         <Field name="items" mode="array">
-          {({ state: { value } }) => (
-            <div>
-              {value.map((item, index) => (
-                <div key={item.productId} className="flex gap-2">
-                  <img src={item.image} alt={item.productId} width={120} height={120} />
+          {({ state: { value, meta } }) => (
+            <div className="flex flex-col gap-2">
+              <Typography as="label" variant="heading-5" color="secondary">
+                Order Products
+              </Typography>
 
-                  <Field name={`items[${index}].quantity`}>
-                    {({ state: { value, meta }, handleChange }) => (
-                      <TextField
-                        label="Quantity"
-                        type="number"
-                        value={value}
-                        errorMessage={meta.errors[0] || ""}
-                        onChange={({ target: { value } }) => handleChange(value ? +value : "")}
-                      />
-                    )}
-                  </Field>
-                  <Field name={`items[${index}].discount`}>
-                    {({ state: { value, meta }, handleChange }) => (
-                      <TextField
-                        label="Discount"
-                        type="number"
-                        value={value}
-                        errorMessage={meta.errors[0] || ""}
-                        onChange={({ target: { value } }) => handleChange(value ? +value : "")}
-                      />
-                    )}
-                  </Field>
+              <div className="flex flex-col gap-2">
+                {meta.errors[0] && <span className="text-xs text-error-primary">{meta.errors[0]}</span>}
 
-                  <Field name={`items[${index}].finalPrice`}>
-                    {({ state: { value: finalPriceValue, meta }, handleChange }) => (
-                      <TextField
-                        label="Final Price"
-                        type="number"
-                        value={finalPriceValue}
-                        errorMessage={meta.errors[0] || ""}
-                        onChange={({ target }) => {
-                          calculateDiscountPercentage(+target.value, value[index].price);
-                          handleChange(target.value ? +target.value : "");
-                        }}
-                      />
-                    )}
-                  </Field>
-                </div>
-              ))}
+                {value.map((item, index) => (
+                  <div key={item.productId} className="flex items-center gap-2">
+                    <img src={item.image} alt={item.productId} width={120} height={120} />
+
+                    <Field name={`items[${index}].quantity`}>
+                      {({ state: { value, meta }, handleChange }) => (
+                        <TextField
+                          label="Quantity"
+                          type="number"
+                          value={value}
+                          errorMessage={meta.errors[0] || ""}
+                          onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                        />
+                      )}
+                    </Field>
+
+                    <Field name={`items[${index}].discount`}>
+                      {({ state: { value, meta }, handleChange }) => (
+                        <TextField
+                          label="Discount"
+                          type="number"
+                          value={value}
+                          errorMessage={meta.errors[0] || ""}
+                          onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                        />
+                      )}
+                    </Field>
+
+                    <Field name={`items[${index}].finalPrice`}>
+                      {({ state: { value: finalPriceValue, meta }, handleChange }) => (
+                        <TextField
+                          label="Final Price"
+                          type="number"
+                          value={finalPriceValue}
+                          errorMessage={meta.errors[0] || ""}
+                          onChange={({ target }) => {
+                            calculateDiscountPercentage(+target.value, value[index].price);
+                            handleChange(target.value ? +target.value : "");
+                          }}
+                        />
+                      )}
+                    </Field>
+                  </div>
+                ))}
+              </div>
+
+              <OrderProducts
+                initialValue={defaultValues.items[0]}
+                value={orderProducts}
+                headersLength={1}
+                handleChange={setOrderProducts}
+              />
             </div>
           )}
         </Field>

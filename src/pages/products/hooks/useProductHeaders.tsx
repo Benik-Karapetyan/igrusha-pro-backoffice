@@ -13,7 +13,6 @@ export const useProductHeaders = () => {
   const setOrder = useStore((s) => s.setOrder);
 
   const handleOrderClick = (item: TableItem) => {
-    console.log(item);
     setOrder({
       ...emptyOrder,
       items: [

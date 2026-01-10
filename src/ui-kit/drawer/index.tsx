@@ -47,7 +47,7 @@ const DrawerContent = React.forwardRef<React.ElementRef<typeof DrawerPrimitive.C
               "-translate-x-[-400px]": status && direction === "left",
               "-translate-x-[400px]": status && direction === "right",
               "w-[1200px]": size === "xl",
-              "w-[600px]": size === "lg",
+              "w-[700px]": size === "lg",
               "w-[400px]": size === "md",
               "w-[300px]": size === "sm",
             },
