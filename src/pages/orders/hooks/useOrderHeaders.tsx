@@ -44,6 +44,15 @@ export const useOrderHeaders = () => {
       value: (item) => typeof item.status === "string" && <OrderStatusCell status={item.status as ENUM_ORDER_STATUS} />,
     },
     {
+      text: "item count",
+      value: (item) =>
+        Array.isArray(item.items) ? (
+          item.items.reduce((acc, item) => acc + item.quantity, 0)
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
       text: "total amount",
       value: (item) =>
         typeof item.totalAmount === "number" ? formatCurrency(item.totalAmount) : <Icon name={mdiMinus} dense />,
