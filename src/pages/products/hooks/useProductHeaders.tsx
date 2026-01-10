@@ -87,24 +87,8 @@ export const useProductHeaders = () => {
       width: 250,
       maxWidth: 250,
     },
-    {
-      text: "description",
-      value: (item) =>
-        typeof item.description === "object" &&
-        typeof item.description.am === "string" &&
-        typeof item.description.ru === "string" &&
-        typeof item.description.en === "string" ? (
-          <div className="flex flex-col gap-2 py-2">
-            <div>{item.description.am}</div>
-            <div>{item.description.ru}</div>
-            <div>{item.description.en}</div>
-          </div>
-        ) : (
-          <Icon name={mdiMinus} dense />
-        ),
-      width: 350,
-      maxWidth: 350,
-    },
+    { text: "rating", value: "rating" },
+    { text: "review count", value: "reviewCount" },
     {
       text: "price",
       value: (item) => (typeof item.price === "number" ? formatCurrency(item.price) : <Icon name={mdiMinus} dense />),
@@ -114,8 +98,6 @@ export const useProductHeaders = () => {
       value: (item) => (typeof item.discount === "number" ? `${item.discount}%` : <Icon name={mdiMinus} dense />),
     },
     { text: "number in stock", value: "numberInStock" },
-    { text: "rating", value: "rating" },
-    { text: "review count", value: "reviewCount" },
     {
       text: "published",
       value: (item) =>
