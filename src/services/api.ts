@@ -18,9 +18,10 @@ api.interceptors.response.use(
           ? error.response.data
           : (error.response.data as { message?: string })?.message || "";
 
+      console.log(errorMessage);
       if (errorMessage.toLowerCase().includes("invalid token")) {
         localStorage.removeItem("accessToken");
-        location.reload();
+        // location.reload();
       }
     }
 

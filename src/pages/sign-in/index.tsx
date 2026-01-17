@@ -29,7 +29,7 @@ export const SignInPage = () => {
 
       const { data } = await api.post("/auth/sign-in", signInData);
 
-      localStorage.setItem("accessToken", data);
+      localStorage.setItem("accessToken", data.token);
       location.reload();
     } catch (err) {
       toast.error(getErrorMessage(err));
