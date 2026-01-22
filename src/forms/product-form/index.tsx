@@ -144,7 +144,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       }
 
       await api.put(`/products/${defaultValues._id}`, {
-        ...omit(requestData, "_id", "productNumber", "updatedAt", "initialNumberInStock", "variants"),
+        ...omit(requestData, "_id", "productNumber", "updatedAt", "variants"),
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
@@ -224,6 +224,21 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
             </div>
           )}
         </Field>
+
+        <div className="w-[calc(100%_/_3_-_0.68rem)]">
+          <Field name="urlName">
+            {({ name, state: { value, meta }, handleChange }) => (
+              <TextField
+                label="URL Name"
+                placeholder="Enter URL name"
+                name={name}
+                value={value}
+                errorMessage={meta.errors[0] || ""}
+                onChange={(e) => handleChange(e.target.value)}
+              />
+            )}
+          </Field>
+        </div>
 
         <div className="flex gap-4">
           <div className="grow">
@@ -321,6 +336,22 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
 
         <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="cost">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Cost"
+                  placeholder="Enter cost"
+                  type="number"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="price">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
@@ -352,7 +383,9 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
               )}
             </Field>
           </div>
+        </div>
 
+        <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="numberInStock">
               {({ name, state: { value, meta }, handleChange }) => (
@@ -368,9 +401,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
               )}
             </Field>
           </div>
-        </div>
 
-        <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="sectionName">
               {({ name, state: { value, meta }, handleChange }) => (
@@ -385,8 +416,46 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
               )}
             </Field>
           </div>
+        </div>
 
-          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+        <div className="flex gap-4">
+          <div className="flex w-[calc(100%_/_3_-_0.68rem)] flex-col gap-2">
+            <Typography variant="heading-4" color="secondary">
+              Age Range
+            </Typography>
+
+            <div className="flex gap-4">
+              <Field name="ageRange.from">
+                {({ name, state: { value, meta }, handleChange }) => (
+                  <TextField
+                    label="From"
+                    placeholder="Enter from"
+                    type="number"
+                    name={name}
+                    value={value}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                  />
+                )}
+              </Field>
+
+              <Field name="ageRange.to">
+                {({ name, state: { value, meta }, handleChange }) => (
+                  <TextField
+                    label="To"
+                    placeholder="Enter to"
+                    type="number"
+                    name={name}
+                    value={value}
+                    errorMessage={meta.errors[0] || ""}
+                    onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                  />
+                )}
+              </Field>
+            </div>
+          </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)] pt-7">
             <Field name="gender">
               {({ name, state: { value, meta }, handleChange }) => (
                 <Select
@@ -403,7 +472,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
             </Field>
           </div>
 
-          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+          <div className="w-[calc(100%_/_3_-_0.68rem)] pt-7">
             <Field name="brand">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
@@ -413,42 +482,6 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                   value={value}
                   errorMessage={meta.errors[0] || ""}
                   onChange={(e) => handleChange(e.target.value)}
-                />
-              )}
-            </Field>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Typography variant="heading-4" color="secondary">
-            Age Range
-          </Typography>
-
-          <div className="flex gap-4">
-            <Field name="ageRange.from">
-              {({ name, state: { value, meta }, handleChange }) => (
-                <TextField
-                  label="From"
-                  placeholder="Enter from"
-                  type="number"
-                  name={name}
-                  value={value}
-                  errorMessage={meta.errors[0] || ""}
-                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
-                />
-              )}
-            </Field>
-
-            <Field name="ageRange.to">
-              {({ name, state: { value, meta }, handleChange }) => (
-                <TextField
-                  label="To"
-                  placeholder="Enter to"
-                  type="number"
-                  name={name}
-                  value={value}
-                  errorMessage={meta.errors[0] || ""}
-                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                 />
               )}
             </Field>

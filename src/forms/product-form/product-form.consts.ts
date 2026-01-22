@@ -4,6 +4,7 @@ import { z } from "zod";
 export const ProductFormSchema = z.object({
   _id: z.string().optional(),
   gallery: z.array(z.string()).min(1, "At least 1 image is required"),
+  urlName: z.string().min(1, "URL name is required"),
   name: z.object({
     am: z.string().min(1, "Name is required"),
     ru: z.string().min(1, "Name is required"),
@@ -14,6 +15,7 @@ export const ProductFormSchema = z.object({
     ru: z.string().min(1, "Description is required"),
     en: z.string().min(1, "Description is required"),
   }),
+  cost: z.number().positive("Min value must be greater than 0").or(z.string().min(1, "Cost is required")),
   price: z.number().positive("Min value must be greater than 0").or(z.string().min(1, "Price is required")),
   discount: z
     .number()
@@ -66,6 +68,7 @@ export type ProductFormValues = z.infer<typeof ProductFormSchema>;
 
 export const emptyProduct: ProductFormValues = {
   gallery: [],
+  urlName: "",
   name: {
     am: "",
     ru: "",
@@ -76,9 +79,11 @@ export const emptyProduct: ProductFormValues = {
     ru: "",
     en: "",
   },
+  cost: "",
   price: "",
   discount: "",
   numberInStock: "",
+  sectionName: "",
   gender: "unisex",
   ageRange: {
     from: "",
@@ -96,7 +101,6 @@ export const emptyProduct: ProductFormValues = {
   },
   rating: 0,
   reviewCount: 0,
-  sectionName: "",
   relatedProducts: [],
 };
 

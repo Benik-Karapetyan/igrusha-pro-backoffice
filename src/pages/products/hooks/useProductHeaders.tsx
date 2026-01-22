@@ -54,7 +54,7 @@ export const useProductHeaders = () => {
   };
 
   const headers: HeaderItem[] = [
-    { text: "product number", value: "productNumber", width: 160, maxWidth: 160 },
+    { text: "product number", value: "productNumber", width: 135, maxWidth: 135 },
     {
       text: "product image",
       value: (item) =>
@@ -67,6 +67,8 @@ export const useProductHeaders = () => {
         ) : (
           <Icon name={mdiMinus} dense />
         ),
+      width: 174,
+      maxWidth: 174,
     },
     {
       text: "name",
@@ -83,8 +85,6 @@ export const useProductHeaders = () => {
         ) : (
           <Icon name={mdiMinus} dense />
         ),
-      width: 250,
-      maxWidth: 250,
     },
     { text: "rating", value: "rating" },
     { text: "review count", value: "reviewCount" },
