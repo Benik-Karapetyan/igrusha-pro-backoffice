@@ -43,14 +43,6 @@ export const ProductsPage = () => {
     setDrawerType("product");
   };
 
-  const deleteInitialNumberInStock = async () => {
-    try {
-      await api.delete("/products/allNumberInStock");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const getProducts = useCallback(async () => {
     try {
       setLoading(true);
@@ -76,11 +68,7 @@ export const ProductsPage = () => {
 
   return (
     <div>
-      <AppHeader
-        title="Products"
-        MainButton={<Button onClick={handleAddClick}>Add Product</Button>}
-        SecondaryButton={<Button onClick={deleteInitialNumberInStock}>Clean Initial Number in Stock</Button>}
-      />
+      <AppHeader title="Products" MainButton={<Button onClick={handleAddClick}>Add Product</Button>} />
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
