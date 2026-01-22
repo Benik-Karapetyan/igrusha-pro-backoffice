@@ -47,7 +47,7 @@ export const ProductsPage = () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/products", { params });
+      const { data } = await api.get("/products/back-office", { params });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
