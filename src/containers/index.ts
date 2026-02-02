@@ -19,3 +19,4 @@ export * from "./range-picker-dialog";
 export * from "./actions-menu";
 export * from "./expenses";
 export * from "./orders";
+export * from "./products";

@@ -1,4 +1,6 @@
 import {
+  CategoryFormValues,
+  emptyCategory,
   emptyExpense,
   emptyOrder,
   emptyProduct,
@@ -8,6 +10,7 @@ import {
   ProductFormValues,
   ProfileFormValues,
 } from "@forms";
+import { ISelectedPublishProduct } from "@types";
 import { create } from "zustand";
 
 export type DialogTypes =
@@ -22,7 +25,7 @@ export type DialogTypes =
   | "banCustomer"
   | "closeCustomer";
 
-export type DrawerTypes = "product" | "expense" | "order";
+export type DrawerTypes = "category" | "product" | "expense" | "order";
 
 export type DialogMode = "" | "create" | "update";
 
@@ -57,8 +60,6 @@ interface IStoreState {
   setAuth: (value: IAuth) => void;
   isAppSidebarMini: boolean;
   setIsAppSidebarMini: (value: boolean) => void;
-  drawerOpen: boolean;
-  setDrawerOpen: (value: boolean) => void;
   drawerType: DrawerTypes | null;
   setDrawerType: (type: DrawerTypes | null) => void;
   dialogs: DialogTypes[];
@@ -71,8 +72,14 @@ interface IStoreState {
   setSelectedIds: (ids: number[]) => void;
   profile: ProfileFormValues;
   setProfile: (value: ProfileFormValues) => void;
+  category: CategoryFormValues;
+  setCategory: (value: CategoryFormValues) => void;
+  selectedCategoryId: string | null;
+  setSelectedCategoryId: (value: string | null) => void;
   product: ProductFormValues;
   setProduct: (value: ProductFormValues) => void;
+  selectedPublishProduct: ISelectedPublishProduct | null;
+  setSelectedPublishProduct: (value: ISelectedPublishProduct | null) => void;
   order: OrderFormValues;
   setOrder: (value: OrderFormValues) => void;
   selectedOrderId: string | null;
@@ -96,8 +103,6 @@ export const useStore = create<IStoreState>((set) => ({
   setAuth: (auth) => set({ auth }),
   isAppSidebarMini: false,
   setIsAppSidebarMini: (isAppSidebarMini) => set({ isAppSidebarMini }),
-  drawerOpen: false,
-  setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
   drawerType: null,
   setDrawerType: (drawerType) => set({ drawerType }),
   dialogs: [],
@@ -110,8 +115,14 @@ export const useStore = create<IStoreState>((set) => ({
   setSelectedIds: (selectedIds) => set({ selectedIds }),
   profile: emptyProfile,
   setProfile: (profile) => set({ profile }),
+  category: emptyCategory,
+  setCategory: (category) => set({ category }),
+  selectedCategoryId: null,
+  setSelectedCategoryId: (selectedCategoryId) => set({ selectedCategoryId }),
   product: emptyProduct,
   setProduct: (product) => set({ product }),
+  selectedPublishProduct: null,
+  setSelectedPublishProduct: (selectedPublishProduct) => set({ selectedPublishProduct }),
   order: emptyOrder,
   setOrder: (order) => set({ order }),
   selectedOrderId: null,

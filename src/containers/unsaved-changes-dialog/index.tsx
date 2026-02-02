@@ -11,12 +11,15 @@ interface UnsavedChangesDialogProps {
 export const UnsavedChangesDialog: FC<UnsavedChangesDialogProps> = ({ onCancel, onConfirm }) => {
   const dialogs = useStore((s) => s.dialogs);
   const setDialogs = useStore((s) => s.setDialogs);
-  const setDrawerOpen = useStore((s) => s.setDrawerOpen);
+  const setDrawerType = useStore((s) => s.setDrawerType);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
 
   const handleCancel = () => {
     if (onCancel) onCancel();
-    else setDialogs(dialogs.filter((type) => type !== "unsavedChanges"));
+    else {
+      setDialogs(dialogs.filter((type) => type !== "unsavedChanges"));
+      setDrawerType(null);
+    }
   };
 
   const handleConfirm = () => {
@@ -24,7 +27,7 @@ export const UnsavedChangesDialog: FC<UnsavedChangesDialogProps> = ({ onCancel, 
     if (onConfirm) onConfirm();
     else {
       setDialogs([]);
-      setDrawerOpen(false);
+      setDrawerType(null);
     }
   };
 

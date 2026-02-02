@@ -1,24 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  AppDrawer,
-  AppHeader,
-  DeleteDialog,
-  ProductPublishDialog,
-  TableContainer,
-  UnsavedChangesDialog,
-} from "@containers";
-import { emptyProduct, OrderForm, ProductForm } from "@forms";
+import { ConfirmDialog } from "@components";
+import { AppDrawer, AppHeader, TableContainer, UnsavedChangesDialog } from "@containers";
+import { CategoryForm, emptyCategory } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
 import { Button, DataTable, TableFooter } from "@ui-kit";
 
-import { useProductHeaders } from "./hooks/useProductHeaders";
+import { useCategoryHeaders } from "./hooks/useCategoryHeaders";
 
-export const ProductsPage = () => {
+export const CategoriesPage = () => {
   const navigate = useNavigate();
-  const { headers } = useProductHeaders();
+  const { headers } = useCategoryHeaders();
   const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
@@ -32,7 +26,9 @@ export const ProductsPage = () => {
   const drawerType = useStore((s) => s.drawerType);
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
-  const setProduct = useStore((s) => s.setProduct);
+  const setCategory = useStore((s) => s.setCategory);
+  const selectedCategoryId = useStore((s) => s.selectedCategoryId);
+  const setSelectedCategoryId = useStore((s) => s.setSelectedCategoryId);
 
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
@@ -45,16 +41,26 @@ export const ProductsPage = () => {
   };
 
   const handleAddClick = () => {
-    setProduct(emptyProduct);
+    setCategory(emptyCategory);
     setDialogMode("create");
-    setDrawerType("product");
+    setDrawerType("category");
   };
 
-  const getProducts = useCallback(async () => {
+  const deleteCategory = async () => {
+    try {
+      await api.delete(`/categories/${selectedCategoryId}`);
+      setSelectedCategoryId(null);
+      getCategories();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getCategories = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/products/back-office", { params });
+      const { data } = await api.get("/categories", { params });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
@@ -69,13 +75,13 @@ export const ProductsPage = () => {
   useEffect(() => {
     if (canFetch.current) {
       canFetch.current = false;
-      void getProducts();
+      void getCategories();
     }
-  }, [navigate, getProducts]);
+  }, [navigate, getCategories]);
 
   return (
     <div>
-      <AppHeader title="Products" MainButton={<Button onClick={handleAddClick}>Add Product</Button>} />
+      <AppHeader title="Categories" MainButton={<Button onClick={handleAddClick}>Add Category</Button>} />
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
@@ -96,22 +102,24 @@ export const ProductsPage = () => {
       </TableContainer>
 
       <AppDrawer
-        open={drawerType === "product"}
-        onOpenChange={(open) => setDrawerType(open ? "product" : null)}
+        open={drawerType === "category"}
+        onOpenChange={(open) => setDrawerType(open ? "category" : null)}
         size="xl"
       >
-        <ProductForm onSuccess={getProducts} />
+        <CategoryForm onSuccess={getCategories} />
       </AppDrawer>
-
-      <AppDrawer open={drawerType === "order"} onOpenChange={(open) => setDrawerType(open ? "order" : null)} size="lg">
-        <OrderForm onSuccess={getProducts} />
-      </AppDrawer>
-
-      <ProductPublishDialog onSuccess={getProducts} />
-
-      <DeleteDialog title="Product" deleteUrl="products" onSuccess={getProducts} />
 
       <UnsavedChangesDialog />
+      <ConfirmDialog
+        open={!!selectedCategoryId}
+        onOpenChange={() => setSelectedCategoryId(null)}
+        title="Delete Category"
+        text="Are you sure you want to delete this category?"
+        onCancel={() => setSelectedCategoryId(null)}
+        confirmBtnText="Delete"
+        confirmBtnVariant="critical"
+        onConfirm={deleteCategory}
+      />
     </div>
   );
 };

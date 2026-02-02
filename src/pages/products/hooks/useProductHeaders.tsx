@@ -11,6 +11,7 @@ export const useProductHeaders = () => {
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
   const setOrder = useStore((s) => s.setOrder);
+  const setSelectedPublishProduct = useStore((s) => s.setSelectedPublishProduct);
 
   const handleOrderClick = (item: TableItem) => {
     setOrder({
@@ -53,6 +54,13 @@ export const useProductHeaders = () => {
     setDialogs(["delete"]);
   };
 
+  const handlePublishClick = (item: TableItem) => {
+    setSelectedPublishProduct({
+      _id: item._id as string,
+      isPublished: item.isPublished as boolean,
+    });
+  };
+
   const headers: HeaderItem[] = [
     { text: "product number", value: "productNumber", width: 135, maxWidth: 135 },
     {
@@ -89,6 +97,10 @@ export const useProductHeaders = () => {
     { text: "rating", value: "rating" },
     { text: "review count", value: "reviewCount" },
     {
+      text: "cost",
+      value: (item) => (typeof item.cost === "number" ? formatCurrency(item.cost) : <Icon name={mdiMinus} dense />),
+    },
+    {
       text: "price",
       value: (item) => (typeof item.price === "number" ? formatCurrency(item.price) : <Icon name={mdiMinus} dense />),
     },
@@ -101,7 +113,7 @@ export const useProductHeaders = () => {
       text: "published",
       value: (item) =>
         typeof item.isPublished === "boolean" ? (
-          <TableSwitchCell status={item.published ? 1 : 0} id={item.id as number} />
+          <TableSwitchCell checked={item.isPublished} onClick={() => handlePublishClick(item)} />
         ) : (
           <Icon name={mdiMinus} dense />
         ),

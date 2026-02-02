@@ -5,6 +5,7 @@ export const ProductFormSchema = z.object({
   _id: z.string().optional(),
   gallery: z.array(z.string()).min(1, "At least 1 image is required"),
   urlName: z.string().min(1, "URL name is required"),
+  categories: z.array(z.string()).min(1, "At least 1 category is required"),
   name: z.object({
     am: z.string().min(1, "Name is required"),
     ru: z.string().min(1, "Name is required"),
@@ -32,16 +33,16 @@ export const ProductFormSchema = z.object({
   ageRange: z.object({
     from: z
       .number()
-      .positive("Min age must be greater than 0")
+      .positive("Min age must be greater than or equal to 0")
       .or(z.string().min(1, "Min age is required"))
       .or(z.literal(0)),
     to: z.number().positive("Max age must be greater than 0").or(z.literal("")).optional(),
   }),
   size: z
     .object({
-      length: z.number().positive("Length must be greater than 0").or(z.string().min(1, "Length is required")),
-      width: z.number().positive("Width must be greater than 0").or(z.string().min(1, "Width is required")),
-      height: z.number().positive("Height must be greater than 0").or(z.string().min(1, "Height is required")),
+      length: z.number().positive("Length must be greater than 0").or(z.literal("")).optional(),
+      width: z.number().positive("Width must be greater than 0").or(z.literal("")).optional(),
+      height: z.number().positive("Height must be greater than 0").or(z.literal("")).optional(),
     })
     .optional(),
   boxSize: z
@@ -60,7 +61,7 @@ export const ProductFormSchema = z.object({
   reviewCount: z.number().positive("Review count must be greater than 0").or(z.literal(0)),
   isPublished: z.boolean().optional(),
   isVariantOf: z.string().optional(),
-  sectionName: z.string().min(1, "Section name is required"),
+  sectionName: z.string().optional(),
   relatedProducts: z.array(z.string()).optional(),
 });
 
@@ -69,6 +70,7 @@ export type ProductFormValues = z.infer<typeof ProductFormSchema>;
 export const emptyProduct: ProductFormValues = {
   gallery: [],
   urlName: "",
+  categories: [],
   name: {
     am: "",
     ru: "",

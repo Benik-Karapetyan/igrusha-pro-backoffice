@@ -1,10 +1,12 @@
-import { ChangeEvent, FC, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 
+import { CategoryFormValues } from "@forms";
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
 import {
+  Autocomplete,
   Button,
   DrawerFooter,
   DrawerHeader,
@@ -49,6 +51,8 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
   const [uploadedImages, setUploadedImages] = useState<{ url: string; key: string; file: File }[]>([]);
+  const canFetch = useRef(true);
+  const [categories, setCategories] = useState([]);
 
   const handleBrowseFile = () => {
     fileInputRef.current?.click();
@@ -104,6 +108,12 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
+        size: omit(
+          requestData.size,
+          !requestData.size?.length ? "length" : "",
+          !requestData.size?.width ? "width" : "",
+          !requestData.size?.height ? "height" : ""
+        ),
         boxSize: omit(
           requestData.boxSize,
           !requestData.boxSize?.length ? "length" : "",
@@ -148,6 +158,12 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         gallery,
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
+        size: omit(
+          requestData.size,
+          !requestData.size?.length ? "length" : "",
+          !requestData.size?.width ? "width" : "",
+          !requestData.size?.height ? "height" : ""
+        ),
         boxSize: omit(
           requestData.boxSize,
           !requestData.boxSize?.length ? "length" : "",
@@ -165,6 +181,27 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       setLoading(false);
     }
   };
+
+  const getCategories = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const { data } = await api.get("/categories", { params: { page: 1, pageSize: 1000 } });
+
+      setCategories(data.items.map((category: CategoryFormValues) => ({ name: category.name.en, id: category._id })));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (canFetch.current) {
+      canFetch.current = false;
+      void getCategories();
+    }
+  }, [getCategories]);
 
   return (
     <form className="h-full" onChange={handleChange} onSubmit={handleSubmit}>
@@ -235,6 +272,21 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                 value={value}
                 errorMessage={meta.errors[0] || ""}
                 onChange={(e) => handleChange(e.target.value)}
+              />
+            )}
+          </Field>
+        </div>
+
+        <div className="w-[calc(100%_/_3_-_0.68rem)]">
+          <Field name="categories">
+            {({ state: { value, meta }, handleChange }) => (
+              <Autocomplete
+                label="Categories"
+                placeholder="Select categories"
+                selectedItems={value}
+                items={categories}
+                errorMessage={meta.errors[0] || ""}
+                onChange={handleChange}
               />
             )}
           </Field>
