@@ -60,7 +60,7 @@ export const VariantOfProducts = ({
     try {
       setLoading(true);
 
-      const { data } = await api.get("/products", {
+      const { data } = await api.get("/products/back-office", {
         params: {
           page: params.page,
           pageSize: params.pageSize,
