@@ -468,6 +468,22 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
               )}
             </Field>
           </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="detailsCount">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Details count"
+                  placeholder="Enter details count"
+                  type="number"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                />
+              )}
+            </Field>
+          </div>
         </div>
 
         <div className="flex gap-4">

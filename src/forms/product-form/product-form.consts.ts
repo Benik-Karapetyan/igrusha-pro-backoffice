@@ -53,6 +53,7 @@ export const ProductFormSchema = z.object({
     })
     .optional(),
   brand: z.string().optional(),
+  detailsCount: z.number().positive("Details count must be greater than 0").or(z.literal("")),
   rating: z
     .number()
     .positive("Rating must be greater than 0")
@@ -101,6 +102,7 @@ export const emptyProduct: ProductFormValues = {
     width: "",
     height: "",
   },
+  detailsCount: "",
   rating: 0,
   reviewCount: 0,
   relatedProducts: [],
