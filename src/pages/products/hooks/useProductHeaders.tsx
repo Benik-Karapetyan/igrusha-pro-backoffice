@@ -42,6 +42,7 @@ export const useProductHeaders = () => {
         : { from: "", to: "" },
       size: item.size || { length: "", width: "", height: "" },
       boxSize: item.boxSize || { length: "", width: "", height: "" },
+      detailsCount: item.detailsCount || "",
     } as unknown as ProductFormValues);
     setDialogMode("update");
     setDrawerType("product");
