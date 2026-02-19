@@ -94,6 +94,8 @@ export const useProductHeaders = () => {
         ) : (
           <Icon name={mdiMinus} dense />
         ),
+      width: 500,
+      maxWidth: 500,
     },
     { text: "rating", value: "rating" },
     { text: "review count", value: "reviewCount" },
