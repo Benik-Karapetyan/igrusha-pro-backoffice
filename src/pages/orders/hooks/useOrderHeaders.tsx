@@ -1,7 +1,5 @@
 import { OrderStatusCell } from "@components";
-import { useToast } from "@hooks";
-import { mdiAbugidaDevanagari, mdiCancel, mdiCheck, mdiKeyboardReturn, mdiMinus } from "@mdi/js";
-import { api } from "@services";
+import { mdiCancel, mdiCheck, mdiKeyboardReturn, mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { ENUM_ORDER_STATUS } from "@types";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
@@ -9,7 +7,6 @@ import { deleteIcon, formatCurrency } from "@utils";
 import { format } from "date-fns";
 
 export const useOrderHeaders = () => {
-  const toast = useToast();
   const setSelectedCompleteOrderId = useStore((s) => s.setSelectedCompleteOrderId);
   const setSelectedConfirmReturnOrderId = useStore((s) => s.setSelectedConfirmReturnOrderId);
   const setSelectedOrderId = useStore((s) => s.setSelectedOrderId);
@@ -20,15 +17,6 @@ export const useOrderHeaders = () => {
 
   const handleReturnOrder = (item: TableItem) => {
     setSelectedConfirmReturnOrderId(item._id as string);
-  };
-
-  const handleSalesFill = async (item: TableItem) => {
-    try {
-      await api.post(`/orders/${item._id}/backfill-sales-temp`);
-      toast.success("Sales filled successfully");
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const headers: HeaderItem[] = [
@@ -108,10 +96,6 @@ export const useOrderHeaders = () => {
       text: "",
       value: (item) => (
         <div className="flex justify-end gap-3 p-1">
-          <Button variant="ghost" size="iconSmall" onClick={() => handleSalesFill(item)}>
-            <Icon name={mdiAbugidaDevanagari} color="icon-success" />
-          </Button>
-
           {item.status === ENUM_ORDER_STATUS.OnTheWay && (
             <>
               <Button variant="ghost" size="iconSmall" onClick={() => handleCompleteOrder(item)}>
