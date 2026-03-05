@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@services";
 import { Icon, ProgressCircular, TableFooter, TextField, Typography } from "@ui-kit";
 import { cn, searchIcon } from "@utils";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 
 import { ProductFormValues } from "../product-form.consts";
 

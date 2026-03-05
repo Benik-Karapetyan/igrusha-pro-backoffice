@@ -7,7 +7,8 @@ import { useForm } from "@tanstack/react-form";
 import { ENUM_CATEGORY_TYPE } from "@types";
 import { Autocomplete, Button, DrawerFooter, DrawerHeader, DrawerTitle, Textarea, TextField } from "@ui-kit";
 import { getErrorMessage } from "@utils";
-import { isEqual, omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 
 import { CategoryFormSchema, CategoryFormValues, categoryTypes } from "./category-form.consts";
 

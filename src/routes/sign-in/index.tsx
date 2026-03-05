@@ -13,7 +13,7 @@ export const signInRoute = createRoute({
   beforeLoad: ({ context: { auth } }) => {
     if (auth)
       throw redirect({
-        to: "/products",
+        to: "/users",
       });
   },
 }).lazy(() => import("./sign-in.lazy").then((d) => d.Route));

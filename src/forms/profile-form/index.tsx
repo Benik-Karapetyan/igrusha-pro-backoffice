@@ -8,7 +8,8 @@ import { useForm } from "@tanstack/react-form";
 import { Button, Icon, ProgressCircular } from "@ui-kit";
 import { getErrorMessage } from "@utils";
 import { isAxiosError } from "axios";
-import { isEqual, omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 import { toast } from "sonner";
 
 import { ProfileAvatar } from "./components";

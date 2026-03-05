@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { mdiChevronLeft, mdiChevronRight } from "@mdi/js";
 import clsx from "clsx";
 import { addMonths, addYears, format, isAfter, subMonths, subYears } from "date-fns";
-import { capitalize } from "lodash";
+import capitalize from "lodash/capitalize";
 
 import { Button } from "../button";
 import { Icon } from "../icon";

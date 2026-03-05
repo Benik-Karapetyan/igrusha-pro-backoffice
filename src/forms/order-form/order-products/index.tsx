@@ -6,7 +6,7 @@ import { api } from "@services";
 import { Button, Icon, ProgressCircular, TableFooter, TextField, Typography } from "@ui-kit";
 import { cn } from "@utils";
 import { searchIcon } from "@utils";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 
 interface OrderProductsProps {
   initialValue?: OrderFormValues["items"][number];
@@ -56,7 +56,7 @@ export const OrderProducts = ({ initialValue, value, headersLength, handleChange
   const getProduct = useCallback(
     async (productId: string) => {
       try {
-        const { data } = await api.get(`/products/${productId}`);
+        const { data } = await api.get(`/products/by-id/${productId}`);
         handleChange([data]);
       } catch (err) {
         console.error(err);
@@ -74,6 +74,7 @@ export const OrderProducts = ({ initialValue, value, headersLength, handleChange
           page: params.page,
           pageSize: params.pageSize,
           search: searchDebounced,
+          sort: "-createdAt",
         },
       });
       setProducts(data.items);

@@ -17,7 +17,8 @@ import {
   Typography,
 } from "@ui-kit";
 import { calculateDiscountPercentage, getErrorMessage } from "@utils";
-import { isEqual, omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 
 import { ProductFormValues } from "../product-form/product-form.consts";
 import { OrderFormSchema, OrderFormValues, paymentMethods } from "./order-form.consts";

@@ -7,7 +7,8 @@ import { useForm } from "@tanstack/react-form";
 import { ENUM_EXPENSE_TYPE } from "@types";
 import { Button, Calendar, DrawerFooter, DrawerHeader, DrawerTitle, Select, Textarea, TextField } from "@ui-kit";
 import { getErrorMessage } from "@utils";
-import { isEqual, omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 
 import { ExpenseFormSchema, ExpenseFormValues, expenseTypes } from "./expense-form.consts";
 

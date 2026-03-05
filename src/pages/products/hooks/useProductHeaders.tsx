@@ -5,6 +5,8 @@ import { useStore } from "@store";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon, formatCurrency } from "@utils";
 
+import { EntryForm } from "./EntryForm";
+
 export const useProductHeaders = () => {
   const setDialogs = useStore((s) => s.setDialogs);
   const setDrawerType = useStore((s) => s.setDrawerType);
@@ -94,8 +96,8 @@ export const useProductHeaders = () => {
         ) : (
           <Icon name={mdiMinus} dense />
         ),
-      width: 500,
-      maxWidth: 500,
+      width: 400,
+      maxWidth: 400,
     },
     { text: "rating", value: "rating" },
     { text: "review count", value: "reviewCount" },
@@ -111,7 +113,9 @@ export const useProductHeaders = () => {
       text: "discount",
       value: (item) => (typeof item.discount === "number" ? `${item.discount}%` : <Icon name={mdiMinus} dense />),
     },
+    { text: "sold", value: "soldCount" },
     { text: "number in stock", value: "numberInStock" },
+    { text: "entry", value: (item) => <EntryForm productId={item._id as string} />, width: 200, maxWidth: 200 },
     {
       text: "published",
       value: (item) =>

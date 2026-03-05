@@ -4,7 +4,7 @@ import { AppHeader, TableContainer } from "@containers";
 import { api } from "@services";
 import { DataTable, Icon, TableFooter, TextField } from "@ui-kit";
 import { searchIcon } from "@utils";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 
 import { useUserHeaders } from "./hooks/useUserHeaders";
 

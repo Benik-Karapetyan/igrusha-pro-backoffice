@@ -6,6 +6,6 @@ export const mainRoute = createRoute({
   getParentRoute: () => authRoute,
   path: "/",
   beforeLoad: () => {
-    throw redirect({ to: "/products" });
+    throw redirect({ to: "/users" });
   },
 }).lazy(() => import("./main.lazy").then((d) => d.Route));

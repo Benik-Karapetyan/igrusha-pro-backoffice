@@ -19,7 +19,8 @@ import {
 } from "@ui-kit";
 import { cn, getErrorMessage, uploadIcon } from "@utils";
 import axios from "axios";
-import { isEqual, omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 
 import { genderOptions, ProductFormSchema, ProductFormValues } from "./product-form.consts";
 import { RelatedProducts } from "./related-products";

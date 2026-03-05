@@ -4,7 +4,7 @@ import { useStore } from "@store";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon, formatCurrency } from "@utils";
 import { format } from "date-fns";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 
 export const useExpenseHeaders = () => {
   const setDrawerType = useStore((s) => s.setDrawerType);
