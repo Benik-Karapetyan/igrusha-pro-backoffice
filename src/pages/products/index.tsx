@@ -108,7 +108,7 @@ export const ProductsPage = () => {
         <OrderForm onSuccess={getProducts} />
       </AppDrawer>
 
-      <EntriesDialog onSuccess={getProducts} />
+      <EntriesDialog />
 
       <ProductPublishDialog onSuccess={getProducts} />
 

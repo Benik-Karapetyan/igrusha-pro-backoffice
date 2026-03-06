@@ -10,11 +10,7 @@ import { CreateUpdateDialog } from "../../create-update-dialog";
 import { DeleteEntryDialog } from "./delete-entry-dialog";
 import { useEntryHeaders } from "./hooks/useEntryHeaders";
 
-interface EntriesDialogProps {
-  onSuccess: () => void;
-}
-
-export const EntriesDialog = ({ onSuccess }: EntriesDialogProps) => {
+export const EntriesDialog = () => {
   const selectedEntriesProductId = useStore((s) => s.selectedEntriesProductId);
   const setSelectedEntriesProductId = useStore((s) => s.setSelectedEntriesProductId);
   const { headers } = useEntryHeaders();
