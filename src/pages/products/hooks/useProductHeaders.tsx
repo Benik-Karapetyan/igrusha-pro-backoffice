@@ -1,6 +1,6 @@
 import { TableSwitchCell } from "@containers";
 import { emptyOrder, ProductFormValues } from "@forms";
-import { mdiMinus, mdiPackageVariantClosedPlus } from "@mdi/js";
+import { mdiFileDocumentPlusOutline, mdiMinus, mdiPackageVariantClosedPlus } from "@mdi/js";
 import { useStore } from "@store";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon, formatCurrency } from "@utils";
@@ -9,9 +9,21 @@ export const useProductHeaders = () => {
   const setDialogs = useStore((s) => s.setDialogs);
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
-  const setProduct = useStore((s) => s.setProduct);
-  const setOrder = useStore((s) => s.setOrder);
+  const setSelectedEntriesProductId = useStore((s) => s.setSelectedEntriesProductId);
   const setSelectedPublishProduct = useStore((s) => s.setSelectedPublishProduct);
+  const setOrder = useStore((s) => s.setOrder);
+  const setProduct = useStore((s) => s.setProduct);
+
+  const handleEntriesClick = (item: TableItem) => {
+    setSelectedEntriesProductId(item._id as string);
+  };
+
+  const handlePublishClick = (item: TableItem) => {
+    setSelectedPublishProduct({
+      _id: item._id as string,
+      isPublished: item.isPublished as boolean,
+    });
+  };
 
   const handleOrderClick = (item: TableItem) => {
     setOrder({
@@ -53,13 +65,6 @@ export const useProductHeaders = () => {
       ...item,
     } as unknown as ProductFormValues);
     setDialogs(["delete"]);
-  };
-
-  const handlePublishClick = (item: TableItem) => {
-    setSelectedPublishProduct({
-      _id: item._id as string,
-      isPublished: item.isPublished as boolean,
-    });
   };
 
   const headers: HeaderItem[] = [
@@ -110,6 +115,18 @@ export const useProductHeaders = () => {
     {
       text: "discount",
       value: (item) => (typeof item.discount === "number" ? `${item.discount}%` : <Icon name={mdiMinus} dense />),
+    },
+    {
+      text: "entries",
+      value: (item) => (
+        <div className="flex items-center gap-2">
+          {item.entriesCount as number}
+
+          <Button variant="ghost" size="iconSmall" onClick={() => handleEntriesClick(item)}>
+            <Icon name={mdiFileDocumentPlusOutline} color="icon-primary" />
+          </Button>
+        </div>
+      ),
     },
     { text: "sold", value: "soldCount" },
     { text: "number in stock", value: "numberInStock" },

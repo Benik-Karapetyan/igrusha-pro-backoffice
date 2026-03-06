@@ -448,6 +448,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                   type="number"
                   name={name}
                   value={value}
+                  disabled={dialogMode !== "create"}
                   errorMessage={meta.errors[0] || ""}
                   onChange={({ target: { value } }) => handleChange(value ? +value : "")}
                 />

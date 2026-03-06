@@ -4,6 +4,7 @@ import {
   AppDrawer,
   AppHeader,
   DeleteDialog,
+  EntriesDialog,
   ProductPublishDialog,
   TableContainer,
   UnsavedChangesDialog,
@@ -106,6 +107,8 @@ export const ProductsPage = () => {
       <AppDrawer open={drawerType === "order"} onOpenChange={(open) => setDrawerType(open ? "order" : null)} size="lg">
         <OrderForm onSuccess={getProducts} />
       </AppDrawer>
+
+      <EntriesDialog onSuccess={getProducts} />
 
       <ProductPublishDialog onSuccess={getProducts} />
 

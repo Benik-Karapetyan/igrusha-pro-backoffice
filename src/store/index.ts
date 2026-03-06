@@ -5,6 +5,7 @@ import {
   emptyOrder,
   emptyProduct,
   emptyProfile,
+  EntryFormValues,
   ExpenseFormValues,
   OrderFormValues,
   ProductFormValues,
@@ -80,6 +81,12 @@ interface IStoreState {
   setProduct: (value: ProductFormValues) => void;
   selectedPublishProduct: ISelectedPublishProduct | null;
   setSelectedPublishProduct: (value: ISelectedPublishProduct | null) => void;
+  entry: EntryFormValues | null;
+  setEntry: (value: EntryFormValues | null) => void;
+  selectedEntriesProductId: string | null;
+  setSelectedEntriesProductId: (value: string | null) => void;
+  selectedEntryId: string | null;
+  setSelectedEntryId: (value: string | null) => void;
   order: OrderFormValues;
   setOrder: (value: OrderFormValues) => void;
   selectedOrderId: string | null;
@@ -123,6 +130,12 @@ export const useStore = create<IStoreState>((set) => ({
   setProduct: (product) => set({ product }),
   selectedPublishProduct: null,
   setSelectedPublishProduct: (selectedPublishProduct) => set({ selectedPublishProduct }),
+  entry: null,
+  setEntry: (entry) => set({ entry }),
+  selectedEntriesProductId: null,
+  setSelectedEntriesProductId: (selectedEntriesProductId) => set({ selectedEntriesProductId }),
+  selectedEntryId: null,
+  setSelectedEntryId: (selectedEntryId) => set({ selectedEntryId }),
   order: emptyOrder,
   setOrder: (order) => set({ order }),
   selectedOrderId: null,

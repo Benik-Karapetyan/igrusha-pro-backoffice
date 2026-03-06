@@ -1,5 +1,7 @@
 export * from "./category-form";
 export * from "./category-form/category-form.consts";
+export * from "./entry-form";
+export * from "./entry-form/entry-form.consts";
 export * from "./expense-form";
 export * from "./expense-form/expense-form.consts";
 export * from "./order-form";

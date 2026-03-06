@@ -4,32 +4,32 @@ import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
-import { ENUM_EXPENSE_TYPE } from "@types";
-import { Button, Calendar, DrawerFooter, DrawerHeader, DrawerTitle, Select, Textarea, TextField } from "@ui-kit";
+import { Button, Calendar, DialogFooter, TextField } from "@ui-kit";
 import { getErrorMessage } from "@utils";
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";
 
-import { ExpenseFormSchema, ExpenseFormValues, expenseTypes } from "./expense-form.consts";
+import { emptyEntry, EntryFormSchema, EntryFormValues } from "./entry-form.consts";
 
-interface ExpenseFormProps {
+interface EntryFormProps {
+  onCancel: () => void;
   onSuccess: () => void;
 }
 
-export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
+export const EntryForm: FC<EntryFormProps> = ({ onCancel, onSuccess }) => {
   const toast = useToast();
   const dialogMode = useStore((s) => s.dialogMode);
-  const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogs = useStore((s) => s.setDialogs);
-  const defaultValues = useStore((s) => s.expense);
+  const selectedEntriesProductId = useStore((s) => s.selectedEntriesProductId);
+  const defaultValues = useStore((s) => s.entry) || emptyEntry;
   const form = useForm({
     defaultValues,
     validators: {
-      onSubmit: ExpenseFormSchema,
+      onSubmit: EntryFormSchema,
     },
     onSubmit: ({ value }) => {
-      if (dialogMode === "create") createExpense(value);
-      else updateExpense(value);
+      if (dialogMode === "create") createEntry(value);
+      else updateEntry(value);
     },
   });
   const { Field, Subscribe } = form;
@@ -39,7 +39,7 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
 
   const handleClose = () => {
     if (hasUnsavedChanges) setDialogs(["unsavedChanges"]);
-    else setDrawerType(null);
+    else onCancel();
   };
 
   const handleChange = () => {
@@ -52,14 +52,16 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
     form.handleSubmit();
   };
 
-  const createExpense = async (requestData: ExpenseFormValues) => {
+  const createEntry = async (requestData: EntryFormValues) => {
     try {
       setLoading(true);
 
-      await api.post("/expenses", omit(requestData, requestData.createdAt ? "" : "createdAt"));
+      await api.post(
+        "/entries",
+        omit({ ...requestData, productId: selectedEntriesProductId }, requestData.createdAt ? "" : "createdAt")
+      );
 
-      setDrawerType(null);
-      toast.success(`Expense has been successfully created!`);
+      toast.success(`Entry has been successfully created!`);
       onSuccess();
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -68,16 +70,16 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
     }
   };
 
-  const updateExpense = async (requestData: ExpenseFormValues) => {
+  const updateEntry = async (requestData: EntryFormValues) => {
     try {
       setLoading(true);
 
-      await api.put(`/expenses/${defaultValues._id}`, {
-        ...omit(requestData, "_id"),
+      await api.put(`/entries/${defaultValues?._id}`, {
+        ...omit(requestData, "_id", "createdBy"),
+        productId: requestData.productId?._id,
       });
 
-      setDrawerType(null);
-      toast.success(`Expense has been successfully updated!`);
+      toast.success(`Entry has been successfully updated!`);
       onSuccess();
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -88,43 +90,12 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
 
   return (
     <form className="h-full" onChange={handleChange} onSubmit={handleSubmit}>
-      <DrawerHeader>
-        <DrawerTitle>{dialogMode === "create" ? "Create Expense" : "Update Expense"}</DrawerTitle>
-      </DrawerHeader>
-
-      <div className="flex h-[calc(100vh_-_8rem)] flex-col gap-4 overflow-auto p-4">
-        <Field name="type">
-          {({ name, state: { value, meta }, handleChange }) => (
-            <Select
-              label="Type"
-              placeholder="Select type"
-              name={name}
-              value={value}
-              items={expenseTypes}
-              errorMessage={meta.errors[0] || ""}
-              onValueChange={(value) => handleChange(value as ENUM_EXPENSE_TYPE)}
-            />
-          )}
-        </Field>
-
-        <Field name="description">
-          {({ name, state: { value, meta }, handleChange }) => (
-            <Textarea
-              label="Description"
-              placeholder="Enter description"
-              name={name}
-              value={value}
-              errorMessage={meta.errors[0] || ""}
-              onChange={(e) => handleChange(e.target.value)}
-            />
-          )}
-        </Field>
-
-        <Field name="amount">
+      <div className="flex max-h-[calc(100vh_-_10rem)] flex-col gap-4 overflow-auto p-6">
+        <Field name="quantity">
           {({ name, state: { value, meta }, handleChange }) => (
             <TextField
-              label="Amount"
-              placeholder="Enter amount"
+              label="Quantity"
+              placeholder="Enter quantity"
               type="number"
               name={name}
               value={value}
@@ -146,7 +117,7 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
         </Field>
       </div>
 
-      <DrawerFooter>
+      <DialogFooter className="flex justify-end gap-4">
         <Button type="button" variant="ghost" onClick={handleClose}>
           Cancel
         </Button>
@@ -157,7 +128,7 @@ export const ExpenseForm: FC<ExpenseFormProps> = ({ onSuccess }) => {
             </Button>
           )}
         </Subscribe>
-      </DrawerFooter>
+      </DialogFooter>
     </form>
   );
 };
