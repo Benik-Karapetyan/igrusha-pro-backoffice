@@ -16,7 +16,6 @@ export const CategoriesPage = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
-    includeIsVariantOf: true,
   });
   const canFetch = useRef(true);
   const [loading, setLoading] = useState(false);
