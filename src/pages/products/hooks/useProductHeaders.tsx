@@ -2,7 +2,7 @@ import { TableSwitchCell } from "@containers";
 import { emptyOrder, ProductFormValues } from "@forms";
 import { mdiFileDocumentPlusOutline, mdiMinus, mdiPackageVariantClosedPlus } from "@mdi/js";
 import { useStore } from "@store";
-import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
+import { Button, Chip, HeaderItem, Icon, Rating, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon, formatCurrency } from "@utils";
 
 export const useProductHeaders = () => {
@@ -68,7 +68,6 @@ export const useProductHeaders = () => {
   };
 
   const headers: HeaderItem[] = [
-    { text: "product number", value: "productNumber", width: 135, maxWidth: 135 },
     {
       text: "product image",
       value: (item) =>
@@ -76,13 +75,13 @@ export const useProductHeaders = () => {
           <img
             src={item.gallery[0]}
             alt={(item.name as { en: string }).en as string}
-            className="h-[150px] min-h-[150px] w-[150px] min-w-[150px] object-cover"
+            className="h-[176px] min-h-[176px] w-[176px] min-w-[176px] object-cover"
           />
         ) : (
           <Icon name={mdiMinus} dense />
         ),
-      width: 174,
-      maxWidth: 174,
+      width: 200,
+      maxWidth: 200,
     },
     {
       text: "name",
@@ -92,9 +91,16 @@ export const useProductHeaders = () => {
         typeof item.name.ru === "string" &&
         typeof item.name.en === "string" ? (
           <div className="flex flex-col gap-2 py-2">
-            <div>{item.name.am}</div>
-            <div>{item.name.ru}</div>
-            <div>{item.name.en}</div>
+            {typeof item.productNumber === "string" && <div># {item.productNumber}</div>}
+            {typeof item.urlName === "string" && <div>{item.urlName}</div>}
+
+            <div>
+              <div title={item.name.am}>{item.name.am}</div>
+              <div title={item.name.ru}>{item.name.ru}</div>
+              <div title={item.name.en}>{item.name.en}</div>
+            </div>
+
+            <Rating value={item.rating as number} reviewCount={item.reviewCount as number} />
           </div>
         ) : (
           <Icon name={mdiMinus} dense />
@@ -102,8 +108,19 @@ export const useProductHeaders = () => {
       width: 400,
       maxWidth: 400,
     },
-    { text: "rating", value: "rating" },
-    { text: "review count", value: "reviewCount" },
+    {
+      text: "categories",
+      value: (item) =>
+        Array.isArray(item.categories) ? (
+          <div className="flex flex-col gap-2">
+            {item.categories.map((category) => (
+              <Chip key={category._id} title={category.name.en} size="small" type="future" />
+            ))}
+          </div>
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
     {
       text: "cost",
       value: (item) => (typeof item.cost === "number" ? formatCurrency(item.cost) : <Icon name={mdiMinus} dense />),

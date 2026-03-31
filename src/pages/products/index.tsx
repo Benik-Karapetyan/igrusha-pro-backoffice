@@ -22,7 +22,7 @@ export const ProductsPage = () => {
   const { headers } = useProductHeaders();
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 25,
     includeIsVariantOf: true,
   });
   const canFetch = useRef(true);

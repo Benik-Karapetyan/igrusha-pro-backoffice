@@ -120,6 +120,8 @@ export const OrdersPage = () => {
 
       const { data } = await api.get("/orders", { params: queryParams });
 
+      console.log("Data", data.items);
+
       setItems(data.items);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);

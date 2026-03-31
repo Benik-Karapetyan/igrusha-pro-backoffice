@@ -1,7 +1,8 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 
+import { mdiChevronDown } from "@mdi/js";
 import { api } from "@services";
-import { Icon, ProgressCircular, TableFooter, TextField, Typography } from "@ui-kit";
+import { Button, Icon, ProgressCircular, TableFooter, TextField, Typography } from "@ui-kit";
 import { cn, searchIcon } from "@utils";
 import debounce from "lodash/debounce";
 
@@ -22,9 +23,10 @@ export const RelatedProducts = ({
   errorMessage = "",
   handleChange,
 }: RelatedProductsProps) => {
+  const [open, setOpen] = useState(false);
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [searchValue, setSearchValue] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -83,53 +85,69 @@ export const RelatedProducts = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-[calc(100%_/_3_-_0.68rem)]">
-        <TextField
-          label="Related products"
-          placeholder="Search product name"
-          name={name}
-          value={searchValue}
-          errorMessage={errorMessage}
-          prependInner={<Icon name={searchIcon} className="mr-1" />}
-          onChange={handleSearchChange}
-        />
+      <div className="flex items-end justify-between">
+        <div className="w-[calc(100%_/_3_-_0.68rem)]">
+          <TextField
+            label="Related products"
+            placeholder="Search product name"
+            name={name}
+            value={searchValue}
+            errorMessage={errorMessage}
+            prependInner={<Icon name={searchIcon} className="mr-1" />}
+            onChange={handleSearchChange}
+          />
+        </div>
+
+        <Button variant="outline" onClick={() => setOpen(!open)}>
+          <Icon
+            name={mdiChevronDown}
+            color="current"
+            dense
+            className={cn("transition-transform duration-300", open && "rotate-180")}
+          />
+          <div className="w-[107px]">{open ? "Hide Related" : "Show Related"}</div>
+        </Button>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center text-primary">
-          <ProgressCircular indeterminate />
-        </div>
-      ) : (
-        <div className="flex flex-col">
-          {relatedProducts.map((product) => (
-            <div
-              key={product._id}
-              className={cn(
-                "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
-                product._id && value?.includes(product._id) && "border border-primary bg-background-default"
-              )}
-              onClick={() =>
-                product._id && value?.includes(product._id)
-                  ? handleChange(value?.filter((id) => id !== product._id) || [])
-                  : handleChange([...(value || []), product._id || ""])
-              }
-            >
-              <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
-              <Typography>{product.name.en}</Typography>
+      {open && (
+        <>
+          {loading ? (
+            <div className="flex items-center justify-center text-primary">
+              <ProgressCircular indeterminate />
             </div>
-          ))}
-        </div>
-      )}
+          ) : (
+            <div className="flex flex-col">
+              {relatedProducts.map((product) => (
+                <div
+                  key={product._id}
+                  className={cn(
+                    "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
+                    product._id && value?.includes(product._id) && "border border-primary bg-background-default"
+                  )}
+                  onClick={() =>
+                    product._id && value?.includes(product._id)
+                      ? handleChange(value?.filter((id) => id !== product._id) || [])
+                      : handleChange([...(value || []), product._id || ""])
+                  }
+                >
+                  <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
+                  <Typography>{product.name.en}</Typography>
+                </div>
+              ))}
+            </div>
+          )}
 
-      <TableFooter
-        headersLength={headersLength}
-        page={params.page}
-        onPageChange={handlePageChange}
-        itemsPerPage={params.pageSize}
-        onItemsPerPageChange={handlePerPageChange}
-        pageCount={totalPages}
-        itemsTotalCount={totalRecords}
-      />
+          <TableFooter
+            headersLength={headersLength}
+            page={params.page}
+            onPageChange={handlePageChange}
+            itemsPerPage={params.pageSize}
+            onItemsPerPageChange={handlePerPageChange}
+            pageCount={totalPages}
+            itemsTotalCount={totalRecords}
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -6,8 +6,8 @@ import { Icon } from "../../icon";
 import { Select } from "../../select";
 
 const itemsPerPageOptions = [
-  { name: "5", id: 5 },
   { name: "10", id: 10 },
+  { name: "25", id: 25 },
   { name: "50", id: 50 },
   { name: "100", id: 100 },
 ];

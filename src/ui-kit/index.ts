@@ -22,6 +22,7 @@ export * from "./alert";
 export * from "./skeleton";
 export * from "./tabs";
 export * from "./calendar";
+export * from "./rating";
 export * from "./radio-group";
 export * from "./typography";
 export * from "./chip";

@@ -20,7 +20,7 @@ export const OrderProducts = ({ initialValue, value, headersLength, handleChange
   const [open, setOpen] = useState(false);
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [searchValue, setSearchValue] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -100,9 +100,9 @@ export const OrderProducts = ({ initialValue, value, headersLength, handleChange
 
   return (
     <div className="flex flex-col gap-4">
-      <Button className="ml-auto w-[160px]" onClick={() => setOpen(!open)}>
+      <Button variant="outline" className="ml-auto" onClick={() => setOpen(!open)}>
         <Icon name={open ? mdiMinus : mdiPlus} color="current" dense />
-        {open ? "Hide Products" : "Add Product"}
+        <div className="w-[100px]">{open ? "Hide Products" : "Add Products"}</div>
       </Button>
 
       {open && (

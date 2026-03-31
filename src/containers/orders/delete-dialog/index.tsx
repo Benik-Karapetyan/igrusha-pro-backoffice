@@ -23,7 +23,7 @@ export const DeleteOrderDialog = ({ onSuccess }: DeleteOrderDialogProps) => {
       await api.delete(`/orders/${selectedOrderId}`);
 
       setSelectedOrderId(null);
-      toast.success("Expense deleted successfully");
+      toast.success("Order deleted successfully");
       onSuccess();
     } catch (error) {
       toast.error(getErrorMessage(error));
