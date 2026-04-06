@@ -46,6 +46,7 @@ export const useProductHeaders = () => {
   const handleEdit = (item: TableItem) => {
     setProduct({
       ...item,
+      categories: Array.isArray(item.categories) ? item.categories.map((category) => category._id) : [],
       relatedProducts: Array.isArray(item.relatedProducts) ? item.relatedProducts.map((product) => product._id) : [],
       ageRange: item.ageRange
         ? (item.ageRange as { to?: number }).to
