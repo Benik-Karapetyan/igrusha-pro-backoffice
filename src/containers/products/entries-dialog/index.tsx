@@ -28,6 +28,11 @@ export const EntriesDialog = () => {
   const setEntry = useStore((s) => s.setEntry);
   const setDialogMode = useStore((s) => s.setDialogMode);
 
+  const handleClose = () => {
+    setSelectedEntriesProductId(null);
+    canFetch.current = true;
+  };
+
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
     canFetch.current = true;
@@ -67,12 +72,12 @@ export const EntriesDialog = () => {
   }, [selectedEntriesProductId, getEntries]);
 
   return (
-    <Dialog open={!!selectedEntriesProductId} onOpenChange={() => setSelectedEntriesProductId(null)}>
+    <Dialog open={!!selectedEntriesProductId} onOpenChange={handleClose}>
       <DialogContent className="min-w-[648px] text-center" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="w-full">Product Entries</DialogTitle>
 
-          <Button variant="ghost" tabIndex={-1} size="iconSmall" onClick={() => setSelectedEntriesProductId(null)}>
+          <Button variant="ghost" tabIndex={-1} size="iconSmall" onClick={handleClose}>
             <Icon name={mdiClose} />
           </Button>
         </DialogHeader>

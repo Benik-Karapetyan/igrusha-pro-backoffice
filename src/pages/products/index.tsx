@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   AppDrawer,
@@ -12,20 +12,25 @@ import {
 import { emptyProduct, OrderForm, ProductForm } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Button, DataTable, TableFooter } from "@ui-kit";
 
 import { useProductHeaders } from "./hooks/useProductHeaders";
 
 export const ProductsPage = () => {
   const navigate = useNavigate();
+  const { page, pageSize } = useSearch({ from: "/auth/products" });
   const { headers } = useProductHeaders();
-  const [params, setParams] = useState({
-    page: 1,
-    pageSize: 25,
-    includeIsVariantOf: true,
-  });
-  const canFetch = useRef(true);
+
+  const params = useMemo(
+    () => ({
+      page,
+      pageSize,
+      includeIsVariantOf: true,
+    }),
+    [page, pageSize]
+  );
+
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -35,14 +40,20 @@ export const ProductsPage = () => {
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setProduct = useStore((s) => s.setProduct);
 
-  const handlePageChange = (page: number) => {
-    setParams((prev) => ({ ...prev, page }));
-    canFetch.current = true;
+  const handlePageChange = (nextPage: number) => {
+    void navigate({
+      to: "/products",
+      search: { page: nextPage, pageSize },
+      replace: true,
+    });
   };
 
-  const handlePerPageChange = (pageSize: string | number) => {
-    setParams((prev) => ({ ...prev, pageSize: +pageSize }));
-    canFetch.current = true;
+  const handlePerPageChange = (nextPageSize: string | number) => {
+    void navigate({
+      to: "/products",
+      search: { page: 1, pageSize: +nextPageSize },
+      replace: true,
+    });
   };
 
   const handleAddClick = () => {
@@ -68,11 +79,8 @@ export const ProductsPage = () => {
   }, [params]);
 
   useEffect(() => {
-    if (canFetch.current) {
-      canFetch.current = false;
-      void getProducts();
-    }
-  }, [navigate, getProducts]);
+    void getProducts();
+  }, [getProducts]);
 
   return (
     <div>
