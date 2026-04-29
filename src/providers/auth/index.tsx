@@ -1,14 +1,9 @@
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 
 import { api } from "@services";
 import { useStore } from "@store";
 
-interface IAuthContextType {
-  auth: boolean;
-  setAuth: (auth: boolean) => void;
-}
-
-const AuthContext = createContext<IAuthContextType | undefined>(undefined);
+import { AuthContext } from "./context";
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [auth, setAuth] = useState<boolean>(!!localStorage.getItem("accessToken"));
@@ -38,14 +33,4 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [getCurrentUser]);
 
   return <AuthContext.Provider value={{ auth, setAuth }}>{children}</AuthContext.Provider>;
-};
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
-  }
-
-  return context;
 };

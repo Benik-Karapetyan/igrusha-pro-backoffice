@@ -2,6 +2,7 @@ import { ChangeEvent, FC, FormEvent, useCallback, useEffect, useRef, useState } 
 
 import { CategoryFormValues } from "@forms";
 import { useToast } from "@hooks";
+import { mdiPlus } from "@mdi/js";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
@@ -89,6 +90,27 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
     form.handleSubmit();
   };
 
+  const normalizeKeyFeatures = (keyFeatures: ProductFormValues["keyFeatures"]) =>
+    keyFeatures?.map((feature) => ({
+      label: {
+        am: feature.label.am,
+        ru: feature.label.ru,
+        en: feature.label.en,
+      },
+      value: {
+        am: feature.value.am,
+        ru: feature.value.ru,
+        en: feature.value.en,
+      },
+    }));
+
+  const normalizeWhatsIncluded = (whatsIncluded: ProductFormValues["whatsIncluded"]) =>
+    whatsIncluded?.map((item) => ({
+      am: item.am,
+      ru: item.ru,
+      en: item.en,
+    }));
+
   const createProduct = async (requestData: ProductFormValues) => {
     try {
       setLoading(true);
@@ -107,6 +129,8 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       await api.post("/products", {
         ...requestData,
         gallery,
+        keyFeatures: normalizeKeyFeatures(requestData.keyFeatures),
+        whatsIncluded: normalizeWhatsIncluded(requestData.whatsIncluded),
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
         size: omit(
@@ -157,6 +181,8 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       await api.put(`/products/${defaultValues._id}`, {
         ...omit(requestData, "_id", "productNumber", "updatedAt", "variants"),
         gallery,
+        keyFeatures: normalizeKeyFeatures(requestData.keyFeatures),
+        whatsIncluded: normalizeWhatsIncluded(requestData.whatsIncluded),
         discount: requestData.discount ? requestData.discount : 0,
         ageRange: omit(requestData.ageRange, !requestData.ageRange.to ? "to" : ""),
         size: omit(
@@ -377,6 +403,332 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                 <Textarea
                   label="Description (English)"
                   placeholder="Enter description"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        </div>
+
+        <Field name="keyFeatures" mode="array">
+          {({ state: { value, meta }, pushValue, removeValue }) => (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <Typography variant="heading-5" color="secondary">
+                  Key Features
+                </Typography>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-[150px]"
+                  onClick={() =>
+                    pushValue({
+                      label: { am: "", ru: "", en: "" },
+                      value: { am: "", ru: "", en: "" },
+                    })
+                  }
+                >
+                  <Icon name={mdiPlus} color="current" dense />
+                  Add Feature
+                </Button>
+              </div>
+
+              {meta.errors[0] && <span className="text-xs text-error-primary">{meta.errors[0]}</span>}
+
+              {(value || []).map((_, index) => (
+                <div key={index} className="border-border-light rounded-md border p-3">
+                  <div className="mb-3 flex items-center justify-between">
+                    <Typography variant="heading-4" color="secondary">
+                      Feature {index + 1}
+                    </Typography>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => removeValue(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+
+                  <div className="mb-3 flex gap-4">
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].label.am`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Label (Armenian)"
+                            placeholder="Enter feature label"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].label.ru`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Label (Russian)"
+                            placeholder="Enter feature label"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].label.en`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Label (English)"
+                            placeholder="Enter feature label"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].value.am`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Value (Armenian)"
+                            placeholder="Enter feature value"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].value.ru`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Value (Russian)"
+                            placeholder="Enter feature value"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`keyFeatures[${index}].value.en`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Value (English)"
+                            placeholder="Enter feature value"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Field>
+
+        <Field name="whatsIncluded" mode="array">
+          {({ state: { value, meta }, pushValue, removeValue }) => (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <Typography variant="heading-5" color="secondary">
+                  What&apos;s Included
+                </Typography>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-[150px]"
+                  onClick={() =>
+                    pushValue({
+                      am: "",
+                      ru: "",
+                      en: "",
+                    })
+                  }
+                >
+                  <Icon name={mdiPlus} color="current" dense />
+                  Add Included
+                </Button>
+              </div>
+
+              {meta.errors[0] && <span className="text-xs text-error-primary">{meta.errors[0]}</span>}
+
+              {(value || []).map((_, index) => (
+                <div key={index} className="border-border-light rounded-md border p-3">
+                  <div className="mb-3 flex items-center justify-between">
+                    <Typography variant="heading-4" color="secondary">
+                      Included Item {index + 1}
+                    </Typography>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => removeValue(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="grow">
+                      <Field name={`whatsIncluded[${index}].am`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Included Item (Armenian)"
+                            placeholder="Enter included item"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`whatsIncluded[${index}].ru`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Included Item (Russian)"
+                            placeholder="Enter included item"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+
+                    <div className="grow">
+                      <Field name={`whatsIncluded[${index}].en`}>
+                        {({ name, state: { value, meta }, handleChange }) => (
+                          <TextField
+                            label="Included Item (English)"
+                            placeholder="Enter included item"
+                            name={name}
+                            value={value}
+                            errorMessage={meta.errors[0] || ""}
+                            onChange={(e) => handleChange(e.target.value)}
+                          />
+                        )}
+                      </Field>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Field>
+
+        <div className="flex gap-4">
+          <div className="grow">
+            <Field name="material.am">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Material (Armenian)"
+                  placeholder="Enter material"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="grow">
+            <Field name="material.ru">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Material (Russian)"
+                  placeholder="Enter material"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="grow">
+            <Field name="material.en">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Material (English)"
+                  placeholder="Enter material"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <div className="grow">
+            <Field name="poweredBy.am">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Powered By (Armenian)"
+                  placeholder="Enter powered by"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="grow">
+            <Field name="poweredBy.ru">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Powered By (Russian)"
+                  placeholder="Enter powered by"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="grow">
+            <Field name="poweredBy.en">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Powered By (English)"
+                  placeholder="Enter powered by"
                   name={name}
                   value={value}
                   errorMessage={meta.errors[0] || ""}

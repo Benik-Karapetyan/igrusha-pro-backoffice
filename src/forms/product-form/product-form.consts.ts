@@ -16,6 +16,45 @@ export const ProductFormSchema = z.object({
     ru: z.string().min(1, "Description is required"),
     en: z.string().min(1, "Description is required"),
   }),
+  keyFeatures: z
+    .array(
+      z.object({
+        label: z.object({
+          am: z.string().min(1, "Key feature label is required"),
+          ru: z.string().min(1, "Key feature label is required"),
+          en: z.string().min(1, "Key feature label is required"),
+        }),
+        value: z.object({
+          am: z.string().min(1, "Key feature value is required"),
+          ru: z.string().min(1, "Key feature value is required"),
+          en: z.string().min(1, "Key feature value is required"),
+        }),
+      })
+    )
+    .optional(),
+  whatsIncluded: z
+    .array(
+      z.object({
+        am: z.string().min(1, "Whats included is required"),
+        ru: z.string().min(1, "Whats included is required"),
+        en: z.string().min(1, "Whats included is required"),
+      })
+    )
+    .optional(),
+  material: z
+    .object({
+      am: z.string().optional(),
+      ru: z.string().optional(),
+      en: z.string().optional(),
+    })
+    .optional(),
+  poweredBy: z
+    .object({
+      am: z.string().optional(),
+      ru: z.string().optional(),
+      en: z.string().optional(),
+    })
+    .optional(),
   cost: z.number().positive("Min value must be greater than 0").or(z.string().min(1, "Cost is required")),
   price: z.number().positive("Min value must be greater than 0").or(z.string().min(1, "Price is required")),
   discount: z
@@ -73,23 +112,23 @@ export const emptyProduct: ProductFormValues = {
   urlName: "",
   categories: [],
   name: {
-    am: "-",
-    ru: "-",
-    en: "-",
+    am: "",
+    ru: "",
+    en: "",
   },
   description: {
-    am: "-",
-    ru: "-",
-    en: "-",
+    am: "",
+    ru: "",
+    en: "",
   },
-  cost: 1000,
-  price: 2000,
+  cost: "",
+  price: "",
   discount: "",
-  numberInStock: 5,
+  numberInStock: "",
   sectionName: "",
   gender: "unisex",
   ageRange: {
-    from: 0,
+    from: "",
     to: "",
   },
   size: {

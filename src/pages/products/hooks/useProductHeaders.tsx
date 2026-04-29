@@ -92,8 +92,10 @@ export const useProductHeaders = () => {
         typeof item.name.ru === "string" &&
         typeof item.name.en === "string" ? (
           <div className="flex flex-col gap-2 py-2">
-            {typeof item.productNumber === "string" && <div># {item.productNumber}</div>}
-            {typeof item.urlName === "string" && <div>{item.urlName}</div>}
+            {typeof item.productNumber === "string" && (
+              <div title={`# ${item.productNumber}`}># {item.productNumber}</div>
+            )}
+            {typeof item.urlName === "string" && <div title={item.urlName}>{item.urlName}</div>}
 
             <div>
               <div title={item.name.am}>{item.name.am}</div>
@@ -123,6 +125,15 @@ export const useProductHeaders = () => {
         ),
     },
     {
+      text: "gender",
+      value: (item) =>
+        typeof item.gender === "string" ? (
+          <Chip title={item.gender} size="small" type="future" className="capitalize" />
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
       text: "cost",
       value: (item) => (typeof item.cost === "number" ? formatCurrency(item.cost) : <Icon name={mdiMinus} dense />),
     },
@@ -147,7 +158,7 @@ export const useProductHeaders = () => {
       ),
     },
     { text: "sold", value: "soldCount" },
-    { text: "number in stock", value: "numberInStock" },
+    { text: "in stock", value: "numberInStock" },
     {
       text: "published",
       value: (item) =>
