@@ -1,4 +1,6 @@
 export enum ENUM_ORDER_STATUS {
+  Draft = "draft",
+  DraftCancelled = "draftCancelled",
   OnTheWay = "onTheWay",
   Delivered = "delivered",
   Cancelled = "cancelled",

@@ -10,6 +10,10 @@ interface OrderStatusCellProps {
 export const OrderStatusCell: FC<OrderStatusCellProps> = ({ status }) => {
   const getStatusText = (): string => {
     switch (status) {
+      case ENUM_ORDER_STATUS.Draft:
+        return "Draft";
+      case ENUM_ORDER_STATUS.DraftCancelled:
+        return "Draft cancelled";
       case ENUM_ORDER_STATUS.OnTheWay:
         return "On the way";
       case ENUM_ORDER_STATUS.Delivered:
@@ -27,6 +31,10 @@ export const OrderStatusCell: FC<OrderStatusCellProps> = ({ status }) => {
 
   const getStatusType = (): ChipTypes => {
     switch (status) {
+      case ENUM_ORDER_STATUS.Draft:
+        return "default";
+      case ENUM_ORDER_STATUS.DraftCancelled:
+        return "blocked";
       case ENUM_ORDER_STATUS.OnTheWay:
         return "future";
       case ENUM_ORDER_STATUS.Delivered:
