@@ -5,6 +5,7 @@ import {
   mdiArchiveOutline,
   mdiFileDocumentMinusOutline,
   mdiPackageVariantClosed,
+  mdiPackageVariantClosedMinus,
   mdiShapeOutline,
 } from "@mdi/js";
 
@@ -37,6 +38,12 @@ export const useNavlinks = () => {
         title: "Products",
         url: "/products",
         icon: mdiArchiveOutline,
+      },
+      {
+        group: false,
+        title: "Utilized Products",
+        url: "/utilized-products",
+        icon: mdiPackageVariantClosedMinus,
       },
       {
         group: false,

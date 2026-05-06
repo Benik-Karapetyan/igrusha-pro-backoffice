@@ -1,18 +1,24 @@
 import { TableSwitchCell } from "@containers";
 import { emptyOrder, ProductFormValues } from "@forms";
-import { mdiFileDocumentPlusOutline, mdiMinus, mdiPackageVariantClosedPlus } from "@mdi/js";
+import {
+  mdiFileDocumentPlusOutline,
+  mdiMinus,
+  mdiPackageVariantClosedMinus,
+  mdiPackageVariantClosedPlus,
+} from "@mdi/js";
 import { useStore } from "@store";
 import { Button, Chip, HeaderItem, Icon, Rating, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon, formatCurrency } from "@utils";
 
 export const useProductHeaders = () => {
-  const setDialogs = useStore((s) => s.setDialogs);
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setSelectedEntriesProductId = useStore((s) => s.setSelectedEntriesProductId);
   const setSelectedPublishProduct = useStore((s) => s.setSelectedPublishProduct);
+  const setSelectedProductId = useStore((s) => s.setSelectedProductId);
   const setOrder = useStore((s) => s.setOrder);
   const setProduct = useStore((s) => s.setProduct);
+  const setSelectedUtilizedProduct = useStore((s) => s.setSelectedUtilizedProduct);
 
   const handleEntriesClick = (item: TableItem) => {
     setSelectedEntriesProductId(item._id as string);
@@ -43,6 +49,16 @@ export const useProductHeaders = () => {
     setDrawerType("order");
   };
 
+  const handleUtilizedProductClick = (item: TableItem) => {
+    setSelectedUtilizedProduct({
+      productId: item._id as string,
+      quantity: "",
+      note: "",
+      createdAt: "",
+    });
+    setDialogMode("create");
+  };
+
   const handleEdit = (item: TableItem) => {
     setProduct({
       ...item,
@@ -62,10 +78,7 @@ export const useProductHeaders = () => {
   };
 
   const handleDelete = (item: TableItem) => {
-    setProduct({
-      ...item,
-    } as unknown as ProductFormValues);
-    setDialogs(["delete"]);
+    setSelectedProductId(item._id as string);
   };
 
   const headers: HeaderItem[] = [
@@ -158,6 +171,7 @@ export const useProductHeaders = () => {
       ),
     },
     { text: "sold", value: "soldCount" },
+    { text: "utilized", value: "utilizedCount" },
     { text: "in stock", value: "numberInStock" },
     {
       text: "published",
@@ -174,6 +188,10 @@ export const useProductHeaders = () => {
         <div className="flex justify-end gap-3 p-1">
           <Button variant="ghost" size="iconSmall" onClick={() => handleOrderClick(item)}>
             <Icon name={mdiPackageVariantClosedPlus} color="icon-primary" />
+          </Button>
+
+          <Button variant="ghost" size="iconSmall" onClick={() => handleUtilizedProductClick(item)}>
+            <Icon name={mdiPackageVariantClosedMinus} color="icon-primary" />
           </Button>
 
           <Button variant="ghost" size="iconSmall" onClick={() => handleEdit(item)}>

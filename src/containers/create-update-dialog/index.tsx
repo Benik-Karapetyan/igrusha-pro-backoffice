@@ -39,8 +39,8 @@ export const CreateUpdateDialog: FC<PropsWithChildren<CreateUpdateDialogProps>> 
         <DialogHeader>
           <DialogTitle>{dialogMode === "create" ? `Add ${title}` : `Update ${title}`}</DialogTitle>
 
-          <Button variant="ghost" size="icon" className="-mr-3" onClick={() => handleOpenChange(false)}>
-            <Icon name={mdiClose} />
+          <Button variant="ghost" size="iconSmall" className="-mr-3" onClick={() => handleOpenChange(false)}>
+            <Icon name={mdiClose} dense />
           </Button>
         </DialogHeader>
 

@@ -14,6 +14,7 @@ import { resetPasswordRoute } from "./reset-password";
 import { setPasswordRoute } from "./set-password";
 import { signInRoute } from "./sign-in";
 import { usersRoute } from "./users";
+import { utilizedProductsRoute } from "./utilized-products";
 
 const routeTree = rootRoute.addChildren([
   authRoute.addChildren([
@@ -22,6 +23,7 @@ const routeTree = rootRoute.addChildren([
     usersRoute,
     categoriesRoute,
     productsRoute,
+    utilizedProductsRoute,
     ordersRoute,
     expensesRoute,
   ]),

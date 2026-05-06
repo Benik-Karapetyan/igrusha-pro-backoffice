@@ -10,3 +10,5 @@ export * from "./product-form";
 export * from "./product-form/product-form.consts";
 export * from "./profile-form";
 export * from "./profile-form/profile-form.consts";
+export * from "./utilized-product-form";
+export * from "./utilized-product-form/utilized-product.consts";

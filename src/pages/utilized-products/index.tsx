@@ -1,32 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  AppDrawer,
-  AppHeader,
-  DeleteProductDialog,
-  EntriesDialog,
-  ProductPublishDialog,
-  TableContainer,
-  UnsavedChangesDialog,
-} from "@containers";
-import { emptyProduct, OrderForm, ProductForm } from "@forms";
+import { AppDrawer, AppHeader, DeleteUtilizedProductDialog, TableContainer, UnsavedChangesDialog } from "@containers";
 import { UtilizedProductForm } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { Button, DataTable, TableFooter } from "@ui-kit";
+import { DataTable, TableFooter } from "@ui-kit";
 
-import { useProductHeaders } from "./hooks/useProductHeaders";
+import { useUtilizedProductHeaders } from "./hooks/useUtilizedProductHeaders";
 
-export const ProductsPage = () => {
+export const UtilizedProductsPage = () => {
   const navigate = useNavigate();
-  const { page, pageSize } = useSearch({ from: "/auth/products" });
-  const { headers } = useProductHeaders();
+  const { page, pageSize } = useSearch({ from: "/auth/utilized-products" });
+  const { headers } = useUtilizedProductHeaders();
   const params = useMemo(
     () => ({
       page,
       pageSize,
-      includeIsVariantOf: true,
     }),
     [page, pageSize]
   );
@@ -34,16 +24,13 @@ export const ProductsPage = () => {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
-  const drawerType = useStore((s) => s.drawerType);
-  const setDrawerType = useStore((s) => s.setDrawerType);
-  const setDialogMode = useStore((s) => s.setDialogMode);
-  const setProduct = useStore((s) => s.setProduct);
   const selectedUtilizedProduct = useStore((s) => s.selectedUtilizedProduct);
   const setSelectedUtilizedProduct = useStore((s) => s.setSelectedUtilizedProduct);
+  // const setDialogMode = useStore((s) => s.setDialogMode);
 
   const handlePageChange = (nextPage: number) => {
     void navigate({
-      to: "/products",
+      to: "/utilized-products",
       search: { page: nextPage, pageSize },
       replace: true,
     });
@@ -51,23 +38,22 @@ export const ProductsPage = () => {
 
   const handlePerPageChange = (nextPageSize: string | number) => {
     void navigate({
-      to: "/products",
+      to: "/utilized-products",
       search: { page: 1, pageSize: +nextPageSize },
       replace: true,
     });
   };
 
-  const handleAddClick = () => {
-    setProduct(emptyProduct);
-    setDialogMode("create");
-    setDrawerType("product");
-  };
+  // const handleAddClick = () => {
+  //   setSelectedUtilizedProduct(emptyUtilizedProduct);
+  //   setDialogMode("create");
+  // };
 
-  const getProducts = useCallback(async () => {
+  const getUtilizedProducts = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/products/back-office", { params });
+      const { data } = await api.get("/utilized-products", { params });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
@@ -80,12 +66,15 @@ export const ProductsPage = () => {
   }, [params]);
 
   useEffect(() => {
-    void getProducts();
-  }, [getProducts]);
+    void getUtilizedProducts();
+  }, [getUtilizedProducts]);
 
   return (
     <div>
-      <AppHeader title="Products" MainButton={<Button onClick={handleAddClick}>Add Product</Button>} />
+      <AppHeader
+        title="Utilized Products"
+        // MainButton={<Button onClick={handleAddClick}>Add Utilized Product</Button>}
+      />
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
@@ -105,27 +94,11 @@ export const ProductsPage = () => {
         </table>
       </TableContainer>
 
-      <AppDrawer
-        open={drawerType === "product"}
-        onOpenChange={(open) => setDrawerType(open ? "product" : null)}
-        size="xl"
-      >
-        <ProductForm onSuccess={getProducts} />
-      </AppDrawer>
-
-      <EntriesDialog />
-
-      <ProductPublishDialog onSuccess={getProducts} />
-
-      <AppDrawer open={drawerType === "order"} onOpenChange={(open) => setDrawerType(open ? "order" : null)} size="lg">
-        <OrderForm onSuccess={getProducts} />
-      </AppDrawer>
-
       <AppDrawer open={!!selectedUtilizedProduct} onOpenChange={() => setSelectedUtilizedProduct(null)}>
-        <UtilizedProductForm onSuccess={getProducts} />
+        <UtilizedProductForm onSuccess={getUtilizedProducts} />
       </AppDrawer>
 
-      <DeleteProductDialog onSuccess={getProducts} />
+      <DeleteUtilizedProductDialog onSuccess={getUtilizedProducts} />
 
       <UnsavedChangesDialog />
     </div>

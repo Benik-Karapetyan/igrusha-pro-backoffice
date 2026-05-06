@@ -10,6 +10,7 @@ import {
   OrderFormValues,
   ProductFormValues,
   ProfileFormValues,
+  UtilizedProductFormValues,
 } from "@forms";
 import { ISelectedPublishProduct } from "@types";
 import { create } from "zustand";
@@ -79,8 +80,14 @@ interface IStoreState {
   setSelectedCategoryId: (value: string | null) => void;
   product: ProductFormValues;
   setProduct: (value: ProductFormValues) => void;
+  selectedProductId: string | null;
+  setSelectedProductId: (value: string | null) => void;
   selectedPublishProduct: ISelectedPublishProduct | null;
   setSelectedPublishProduct: (value: ISelectedPublishProduct | null) => void;
+  selectedUtilizedProduct: UtilizedProductFormValues | null;
+  setSelectedUtilizedProduct: (value: UtilizedProductFormValues | null) => void;
+  selectedUtilizedProductId: string | null;
+  setSelectedUtilizedProductId: (value: string | null) => void;
   entry: EntryFormValues | null;
   setEntry: (value: EntryFormValues | null) => void;
   selectedEntriesProductId: string | null;
@@ -128,8 +135,14 @@ export const useStore = create<IStoreState>((set) => ({
   setSelectedCategoryId: (selectedCategoryId) => set({ selectedCategoryId }),
   product: emptyProduct,
   setProduct: (product) => set({ product }),
+  selectedProductId: null,
+  setSelectedProductId: (selectedProductId) => set({ selectedProductId }),
   selectedPublishProduct: null,
   setSelectedPublishProduct: (selectedPublishProduct) => set({ selectedPublishProduct }),
+  selectedUtilizedProduct: null,
+  setSelectedUtilizedProduct: (selectedUtilizedProduct) => set({ selectedUtilizedProduct }),
+  selectedUtilizedProductId: null,
+  setSelectedUtilizedProductId: (selectedUtilizedProductId) => set({ selectedUtilizedProductId }),
   entry: null,
   setEntry: (entry) => set({ entry }),
   selectedEntriesProductId: null,
