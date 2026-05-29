@@ -23,6 +23,7 @@ import axios from "axios";
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";
 
+import { GenerateContentButton } from "./generate-content-button";
 import { genderOptions, ProductFormSchema, ProductFormValues } from "./product-form.consts";
 import { RelatedProducts } from "./related-products";
 import { VariantOfProducts } from "./variant-of-products";
@@ -82,6 +83,21 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
 
   const handleChange = () => {
     setHasUnsavedChanges(!isEqual(defaultValues, form.state.values));
+  };
+
+  const handleContentGenerated = (
+    data: Pick<
+      ProductFormValues,
+      "name" | "description" | "keyFeatures" | "whatsIncluded" | "material" | "poweredBy" | "size"
+    >
+  ) => {
+    form.setFieldValue("name", data.name);
+    form.setFieldValue("description", data.description);
+    form.setFieldValue("keyFeatures", data.keyFeatures);
+    form.setFieldValue("whatsIncluded", data.whatsIncluded);
+    form.setFieldValue("material", data.material);
+    form.setFieldValue("poweredBy", data.poweredBy);
+    form.setFieldValue("size", data.size);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -234,6 +250,10 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
     <form className="h-full" onChange={handleChange} onSubmit={handleSubmit}>
       <DrawerHeader>
         <DrawerTitle>{dialogMode === "create" ? "Create Product" : "Update Product"}</DrawerTitle>
+
+        {defaultValues._id && (
+          <GenerateContentButton productId={defaultValues._id} onContentGenerated={handleContentGenerated} />
+        )}
       </DrawerHeader>
 
       <div className="flex h-[calc(100vh_-_8rem)] flex-col gap-4 overflow-auto p-4 pb-80">
@@ -444,11 +464,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                     <Typography variant="heading-4" color="secondary">
                       Feature {index + 1}
                     </Typography>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => removeValue(index)}
-                    >
+                    <Button type="button" variant="ghost" onClick={() => removeValue(index)}>
                       Remove
                     </Button>
                   </div>
@@ -584,11 +600,7 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
                     <Typography variant="heading-4" color="secondary">
                       Included Item {index + 1}
                     </Typography>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => removeValue(index)}
-                    >
+                    <Button type="button" variant="ghost" onClick={() => removeValue(index)}>
                       Remove
                     </Button>
                   </div>
