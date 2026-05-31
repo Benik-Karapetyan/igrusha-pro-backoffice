@@ -194,8 +194,21 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
         gallery = requestData.gallery.map((image) => `uploads/${image.split("/").pop()}`);
       }
 
+      const skipMaterial =
+        requestData.material?.am === "" && requestData.material?.ru === "" && requestData.material?.en === "";
+      const skipPoweredBy =
+        requestData.poweredBy?.am === "" && requestData.poweredBy?.ru === "" && requestData.poweredBy?.en === "";
+
       await api.put(`/products/${defaultValues._id}`, {
-        ...omit(requestData, "_id", "productNumber", "updatedAt", "variants"),
+        ...omit(
+          requestData,
+          "_id",
+          "productNumber",
+          "updatedAt",
+          "variants",
+          skipMaterial ? "material" : "",
+          skipPoweredBy ? "poweredBy" : ""
+        ),
         gallery,
         keyFeatures: normalizeKeyFeatures(requestData.keyFeatures),
         whatsIncluded: normalizeWhatsIncluded(requestData.whatsIncluded),

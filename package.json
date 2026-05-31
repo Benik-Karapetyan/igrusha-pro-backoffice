@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@tanstack/react-router-devtools": "^1.117.1",
     "@types/big.js": "^6.2.2",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/lodash": "^4.17.15",
