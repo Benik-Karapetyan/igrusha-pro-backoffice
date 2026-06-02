@@ -100,6 +100,15 @@ export const OrdersPage = () => {
     }
   };
 
+  const handleMigrateOrders = async () => {
+    try {
+      await api.post("/orders/backfill-item-prices");
+      toast.success("Orders migrated successfully");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    }
+  };
+
   const getOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -140,7 +149,11 @@ export const OrdersPage = () => {
 
   return (
     <div>
-      <AppHeader title="Orders" MainButton={<Button onClick={handleAddClick}>Add Order</Button>} />
+      <AppHeader
+        title="Orders"
+        SecondaryButton={<Button onClick={handleMigrateOrders}>Migrate Orders</Button>}
+        MainButton={<Button onClick={handleAddClick}>Add Order</Button>}
+      />
 
       <div className="flex gap-4 p-4 pb-0">
         <div className="w-[250px]">
