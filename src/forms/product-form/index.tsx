@@ -91,7 +91,8 @@ export const ProductForm: FC<ProductFormProps> = ({ onSuccess }) => {
       "name" | "description" | "keyFeatures" | "whatsIncluded" | "material" | "poweredBy" | "size"
     >
   ) => {
-    form.setFieldValue("name", data.name);
+    // form.setFieldValue("name", data.name);
+    console.log("Name", data.name);
     form.setFieldValue("description", data.description);
     form.setFieldValue("keyFeatures", data.keyFeatures);
     form.setFieldValue("whatsIncluded", data.whatsIncluded);
