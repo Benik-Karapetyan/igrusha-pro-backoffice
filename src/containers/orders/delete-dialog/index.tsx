@@ -41,6 +41,7 @@ export const DeleteOrderDialog = ({ onSuccess }: DeleteOrderDialogProps) => {
       confirmBtnVariant="critical"
       confirmBtnText="Delete"
       loading={loading}
+      onCancel={() => setSelectedOrderId(null)}
       onConfirm={deleteOrder}
     />
   );

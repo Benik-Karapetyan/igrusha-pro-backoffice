@@ -137,3 +137,12 @@ export const calculateDiscountPercentage = (finalAmount: number, originalAmount:
   const discount = ((originalAmount - finalAmount) / originalAmount) * 100;
   return Math.round(discount * 100) / 100; // Round to 2 decimal places
 };
+
+/**
+ * Calculates the line total after applying a percentage discount
+ * @param price - Unit price
+ * @param quantity - Item quantity
+ * @param discount - Discount percentage (e.g., 10 for 10%)
+ */
+export const calculateDiscountedAmount = (price: number, quantity: number, discount: number): number =>
+  price * quantity * (1 - discount / 100);

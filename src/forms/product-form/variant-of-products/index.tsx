@@ -125,7 +125,9 @@ export const VariantOfProducts = ({
                     "flex cursor-pointer items-center gap-4 rounded-md hover:bg-background-default",
                     value === product._id && "border border-primary bg-background-default"
                   )}
-                  onClick={() => handleChange(product._id)}
+                  onClick={() => {
+                    handleChange(value === product._id ? "" : product._id);
+                  }}
                 >
                   <img src={product.gallery[0]} alt="" className="h-[120px] w-[120px] rounded-md object-cover" />
                   <Typography>{product.name.en}</Typography>

@@ -7,10 +7,11 @@ import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate } from "@tanstack/react-router";
-import { ENUM_ORDER_STATUS } from "@types";
+import { ENUM_ORDER_STATUS, IOrder } from "@types";
 import { Autocomplete, Button, DataTable, Icon, TableFooter, TextField, Typography } from "@ui-kit";
 import { calendarIcon, formatCurrency, getErrorMessage } from "@utils";
 
+import { ExpandContent } from "./expand-content";
 import { useOrderHeaders } from "./hooks/useOrderHeaders";
 
 export const OrdersPage = () => {
@@ -41,6 +42,11 @@ export const OrdersPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const selectedConfirmReturnOrderId = useStore((s) => s.selectedConfirmReturnOrderId);
   const setSelectedConfirmReturnOrderId = useStore((s) => s.setSelectedConfirmReturnOrderId);
+  const [expandedRow, setExpandedRow] = useState<number>();
+
+  const handleExpand = (index: number) => {
+    setExpandedRow(index === expandedRow ? undefined : index);
+  };
 
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
@@ -179,7 +185,18 @@ export const OrdersPage = () => {
 
       <TableContainer itemsLength={items.length}>
         <div className="overflow-auto">
-          <DataTable headers={headers} items={items} loading={loading} hideFooter />
+          <DataTable
+            headers={headers}
+            items={items}
+            loading={loading}
+            expandable
+            expandContent={
+              <ExpandContent items={typeof expandedRow === "number" ? (items as IOrder[])[expandedRow].items : []} />
+            }
+            expandedRow={expandedRow}
+            onExpand={handleExpand}
+            hideFooter
+          />
         </div>
 
         <table className="w-full">

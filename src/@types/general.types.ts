@@ -5,3 +5,9 @@ export interface ISelectItem {
 export type DrawerDirection = "left" | "right";
 
 export type DrawerSize = "xs" | "sm" | "md" | "lg" | "xl";
+
+export type TLangString = {
+  am: string;
+  ru: string;
+  en: string;
+};
