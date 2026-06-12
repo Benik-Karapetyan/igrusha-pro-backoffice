@@ -67,6 +67,7 @@ export const RelatedProducts = ({
           page: params.page,
           pageSize: params.pageSize,
           search: searchDebounced,
+          includeIsVariantOf: true,
         },
       });
       setRelatedProducts(data.items);
