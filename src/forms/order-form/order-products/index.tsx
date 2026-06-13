@@ -69,12 +69,13 @@ export const OrderProducts = ({ initialValue, value, headersLength, handleChange
     try {
       setLoading(true);
 
-      const { data } = await api.get("/products", {
+      const { data } = await api.get("/products/back-office", {
         params: {
           page: params.page,
           pageSize: params.pageSize,
           search: searchDebounced,
-          sort: "-createdAt",
+          includeIsVariantOf: true,
+          excludeOutOfStock: true,
         },
       });
       setProducts(data.items);
