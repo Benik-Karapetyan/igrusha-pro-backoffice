@@ -1,12 +1,23 @@
-import { FC, FormEvent, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useRef, useState } from "react";
 
 import { useToast } from "@hooks";
 import { api } from "@services";
 import { useStore } from "@store";
 import { useForm } from "@tanstack/react-form";
 import { ENUM_CATEGORY_TYPE } from "@types";
-import { Autocomplete, Button, DrawerFooter, DrawerHeader, DrawerTitle, Textarea, TextField } from "@ui-kit";
-import { getErrorMessage } from "@utils";
+import {
+  Autocomplete,
+  Button,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Icon,
+  Textarea,
+  TextField,
+  Typography,
+} from "@ui-kit";
+import { cn, getErrorMessage, uploadIcon } from "@utils";
+import axios from "axios";
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";
 
@@ -22,6 +33,7 @@ export const CategoryForm: FC<CategoryFormProps> = ({ onSuccess }) => {
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogs = useStore((s) => s.setDialogs);
   const defaultValues = useStore((s) => s.category);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const form = useForm({
     defaultValues,
     validators: {
@@ -36,10 +48,30 @@ export const CategoryForm: FC<CategoryFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const hasUnsavedChanges = useStore((s) => s.hasUnsavedChanges);
   const setHasUnsavedChanges = useStore((s) => s.setHasUnsavedChanges);
+  const [uploadedImage, setUploadedImage] = useState<{ url: string; key: string; file: File } | null>(null);
 
   const handleClose = () => {
     if (hasUnsavedChanges) setDialogs(["unsavedChanges"]);
     else setDrawerType(null);
+  };
+
+  const handleBrowseFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>, setValue: (value: string) => void) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setValue(URL.createObjectURL(file));
+
+      const { data } = await api.post("/uploads/get-presigned-url", {
+        filename: file.name,
+        contentType: file.type,
+      });
+
+      setUploadedImage({ url: data.url, key: data.key, file });
+    }
   };
 
   const handleChange = () => {
@@ -56,7 +88,16 @@ export const CategoryForm: FC<CategoryFormProps> = ({ onSuccess }) => {
     try {
       setLoading(true);
 
-      await api.post("/categories", requestData);
+      let image: string = "";
+
+      if (uploadedImage) {
+        await axios.put(uploadedImage.url, uploadedImage.file, {
+          headers: { "Content-Type": uploadedImage.file.type },
+        });
+        image = uploadedImage.key;
+      }
+
+      await api.post("/categories", { ...requestData, image });
 
       setDrawerType(null);
       toast.success("Category has been successfully created!");
@@ -72,7 +113,22 @@ export const CategoryForm: FC<CategoryFormProps> = ({ onSuccess }) => {
     try {
       setLoading(true);
 
-      await api.put(`/categories/${defaultValues._id}`, omit(requestData, "_id"));
+      let image: string = "";
+
+      if (uploadedImage) {
+        await api.put(`/uploads/delete-images`, {
+          gallery: [new URL(requestData.image).pathname.slice(1)],
+        });
+
+        await axios.put(uploadedImage.url, uploadedImage.file, {
+          headers: { "Content-Type": uploadedImage.file.type },
+        });
+        image = uploadedImage.key;
+      } else {
+        image = requestData.image;
+      }
+
+      await api.put(`/categories/${defaultValues._id}`, { ...omit(requestData, "_id"), image });
 
       setDrawerType(null);
       toast.success("Category has been successfully updated!");
@@ -91,6 +147,52 @@ export const CategoryForm: FC<CategoryFormProps> = ({ onSuccess }) => {
       </DrawerHeader>
 
       <div className="flex h-[calc(100vh_-_8rem)] flex-col gap-4 overflow-auto p-4 pb-80">
+        <Field name="image">
+          {({ state: { value, meta }, handleChange }) => (
+            <div className="flex flex-col gap-1.5">
+              <Typography variant="heading-5" color="secondary">
+                Image
+              </Typography>
+
+              <div className="flex gap-4">
+                {!!value && <img src={value} alt="" className="h-[376px] w-[376px] rounded-md border object-cover" />}
+
+                <div>
+                  <div
+                    className={cn(
+                      "flex h-[376px] w-[376px] cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border border-dashed px-2 py-4",
+                      meta.errors[0] && "border-error-primary"
+                    )}
+                    onClick={handleBrowseFile}
+                  >
+                    <Icon name={uploadIcon} />
+
+                    <div className="flex items-center gap-1">
+                      <Typography variant="heading-2" color="link">
+                        Upload Image
+                      </Typography>
+                    </div>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      accept=".webp,.jpg,.png,.pdf,.mp4"
+                      onChange={(e) => handleFileChange(e, handleChange)}
+                    />
+
+                    <Typography variant="body-sm" color="secondary">
+                      JPEG, PNG, PDF, and MP4 formats, up to 50 MB.
+                    </Typography>
+                  </div>
+
+                  {meta.errors[0] && <span className="text-xs text-error-primary">{meta.errors[0]}</span>}
+                </div>
+              </div>
+            </div>
+          )}
+        </Field>
+
         <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="type">

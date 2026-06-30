@@ -4,6 +4,7 @@ import { z } from "zod";
 export const CategoryFormSchema = z.object({
   _id: z.string().optional(),
   type: z.nativeEnum(ENUM_CATEGORY_TYPE).array().min(1, "At least 1 type is required"),
+  image: z.string().min(1, "Image is required"),
   urlName: z.string().min(1, "URL name is required"),
   name: z.object({
     am: z.string().min(1, "Name is required"),
@@ -26,6 +27,7 @@ export type CategoryFormValues = z.infer<typeof CategoryFormSchema>;
 
 export const emptyCategory: CategoryFormValues = {
   type: [],
+  image: "",
   urlName: "",
   name: {
     am: "",
