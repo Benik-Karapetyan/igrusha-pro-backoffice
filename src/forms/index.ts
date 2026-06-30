@@ -1,3 +1,5 @@
+export * from "./brand-form";
+export * from "./brand-form/brand-form.consts";
 export * from "./category-form";
 export * from "./category-form/category-form.consts";
 export * from "./entry-form";

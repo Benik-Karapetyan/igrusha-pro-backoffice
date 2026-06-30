@@ -7,6 +7,7 @@ import {
   mdiPackageVariantClosed,
   mdiPackageVariantClosedMinus,
   mdiShapeOutline,
+  mdiTagOutline,
 } from "@mdi/js";
 
 type NavLinkItem =
@@ -32,6 +33,12 @@ export const useNavlinks = () => {
         title: "Categories",
         url: "/categories",
         icon: mdiShapeOutline,
+      },
+      {
+        group: false,
+        title: "Brands",
+        url: "/brands",
+        icon: mdiTagOutline,
       },
       {
         group: false,

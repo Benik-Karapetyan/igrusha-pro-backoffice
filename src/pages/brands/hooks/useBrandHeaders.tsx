@@ -1,66 +1,53 @@
 import { TableSwitchCell } from "@containers";
-import { CategoryFormValues, categoryTypes } from "@forms";
+import { BrandFormValues } from "@forms";
 import { mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
 import { deleteIcon, editIcon } from "@utils";
 
-export const useCategoryHeaders = () => {
+export const useBrandHeaders = () => {
   const setDialogs = useStore((s) => s.setDialogs);
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
-  const setCategory = useStore((s) => s.setCategory);
-  const setSelectedCategoryId = useStore((s) => s.setSelectedCategoryId);
-  const setSelectedPublishCategory = useStore((s) => s.setSelectedPublishCategory);
+  const setBrand = useStore((s) => s.setBrand);
+  const setSelectedBrandId = useStore((s) => s.setSelectedBrandId);
+  const setSelectedPublishBrand = useStore((s) => s.setSelectedPublishBrand);
 
   const handlePublishClick = (item: TableItem) => {
-    setSelectedPublishCategory({
+    setSelectedPublishBrand({
       _id: item._id as string,
       isPublished: item.isPublished as boolean,
     });
   };
 
   const handleEdit = (item: TableItem) => {
-    setCategory(item as unknown as CategoryFormValues);
+    setBrand(item as unknown as BrandFormValues);
     setDialogMode("update");
-    setDrawerType("category");
+    setDrawerType("brand");
   };
 
   const handleDelete = (item: TableItem) => {
-    setSelectedCategoryId(item._id as string);
+    setSelectedBrandId(item._id as string);
     setDialogs(["delete"]);
   };
 
   const headers: HeaderItem[] = [
     {
-      text: "category image",
+      text: "brand image",
       value: (item) =>
         item.image && typeof item.image === "string" ? (
           <div className="flex items-center justify-center p-5">
             <img
               src={item.image}
               alt={(item.name as { en: string }).en as string}
-              className="h-[80px] min-h-[80px] w-[80px] min-w-[80px] object-cover"
+              className="h-auto w-[200px] min-w-[200px] object-cover"
             />
           </div>
         ) : (
           <Icon name={mdiMinus} dense />
         ),
-    },
-    {
-      text: "type",
-      value: (item) =>
-        Array.isArray(item.type) && item.type.length > 0 ? (
-          <div className="flex flex-col">
-            {item.type
-              .map((type) => categoryTypes.find((t) => t.id === type)?.name)
-              .map((name) => (
-                <div key={name}>{name}</div>
-              ))}
-          </div>
-        ) : (
-          <Icon name={mdiMinus} dense />
-        ),
+      width: 250,
+      maxWidth: 250,
     },
     {
       text: "url name",

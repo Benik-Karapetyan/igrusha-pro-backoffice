@@ -1,5 +1,7 @@
 import {
+  BrandFormValues,
   CategoryFormValues,
+  emptyBrand,
   emptyCategory,
   emptyExpense,
   emptyOrder,
@@ -27,7 +29,7 @@ export type DialogTypes =
   | "banCustomer"
   | "closeCustomer";
 
-export type DrawerTypes = "category" | "product" | "expense" | "order";
+export type DrawerTypes = "category" | "brand" | "product" | "expense" | "order";
 
 export type DialogMode = "" | "create" | "update";
 
@@ -80,6 +82,12 @@ interface IStoreState {
   setSelectedCategoryId: (value: string | null) => void;
   selectedPublishCategory: ISelectedPublishItem | null;
   setSelectedPublishCategory: (value: ISelectedPublishItem | null) => void;
+  brand: BrandFormValues;
+  setBrand: (value: BrandFormValues) => void;
+  selectedBrandId: string | null;
+  setSelectedBrandId: (value: string | null) => void;
+  selectedPublishBrand: ISelectedPublishItem | null;
+  setSelectedPublishBrand: (value: ISelectedPublishItem | null) => void;
   product: ProductFormValues;
   setProduct: (value: ProductFormValues) => void;
   selectedProductId: string | null;
@@ -137,6 +145,12 @@ export const useStore = create<IStoreState>((set) => ({
   setSelectedCategoryId: (selectedCategoryId) => set({ selectedCategoryId }),
   selectedPublishCategory: null,
   setSelectedPublishCategory: (selectedPublishCategory) => set({ selectedPublishCategory }),
+  brand: emptyBrand,
+  setBrand: (brand) => set({ brand }),
+  selectedBrandId: null,
+  setSelectedBrandId: (selectedBrandId) => set({ selectedBrandId }),
+  selectedPublishBrand: null,
+  setSelectedPublishBrand: (selectedPublishBrand) => set({ selectedPublishBrand }),
   product: emptyProduct,
   setProduct: (product) => set({ product }),
   selectedProductId: null,

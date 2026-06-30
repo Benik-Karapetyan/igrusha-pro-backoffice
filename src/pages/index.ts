@@ -1,3 +1,4 @@
+export * from "./brands";
 export * from "./categories";
 export * from "./check-email";
 export * from "./expenses";

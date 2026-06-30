@@ -2,6 +2,7 @@ import { createRouter } from "@tanstack/react-router";
 
 import { rootRoute } from "./__root";
 import { authRoute } from "./auth";
+import { brandsRoute } from "./brands";
 import { categoriesRoute } from "./categories";
 import { checkEmailRoute } from "./check-email";
 import { expensesRoute } from "./expenses";
@@ -22,6 +23,7 @@ const routeTree = rootRoute.addChildren([
     profileRoute,
     usersRoute,
     categoriesRoute,
+    brandsRoute,
     productsRoute,
     utilizedProductsRoute,
     ordersRoute,
