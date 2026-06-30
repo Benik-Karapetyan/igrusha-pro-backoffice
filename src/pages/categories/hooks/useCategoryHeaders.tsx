@@ -11,6 +11,14 @@ export const useCategoryHeaders = () => {
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setCategory = useStore((s) => s.setCategory);
   const setSelectedCategoryId = useStore((s) => s.setSelectedCategoryId);
+  const setSelectedPublishCategory = useStore((s) => s.setSelectedPublishCategory);
+
+  const handlePublishClick = (item: TableItem) => {
+    setSelectedPublishCategory({
+      _id: item._id as string,
+      isPublished: item.isPublished as boolean,
+    });
+  };
 
   const handleEdit = (item: TableItem) => {
     setCategory(item as unknown as CategoryFormValues);
@@ -97,7 +105,7 @@ export const useCategoryHeaders = () => {
       text: "published",
       value: (item) =>
         typeof item.isPublished === "boolean" ? (
-          <TableSwitchCell checked={item.isPublished} />
+          <TableSwitchCell checked={item.isPublished} onClick={() => handlePublishClick(item)} />
         ) : (
           <Icon name={mdiMinus} dense />
         ),

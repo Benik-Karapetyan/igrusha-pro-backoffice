@@ -11,3 +11,8 @@ export type TLangString = {
   ru: string;
   en: string;
 };
+
+export interface ISelectedPublishItem {
+  _id: string;
+  isPublished: boolean;
+}

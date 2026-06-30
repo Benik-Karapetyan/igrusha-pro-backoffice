@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ConfirmDialog } from "@components";
-import { AppDrawer, AppHeader, TableContainer, UnsavedChangesDialog } from "@containers";
+import { AppDrawer, AppHeader, DeleteCategoryDialog, TableContainer, UnsavedChangesDialog } from "@containers";
+import { CategoryPublishDialog } from "@containers";
 import { CategoryForm, emptyCategory } from "@forms";
 import { api } from "@services";
 import { useStore } from "@store";
@@ -26,8 +26,6 @@ export const CategoriesPage = () => {
   const setDrawerType = useStore((s) => s.setDrawerType);
   const setDialogMode = useStore((s) => s.setDialogMode);
   const setCategory = useStore((s) => s.setCategory);
-  const selectedCategoryId = useStore((s) => s.selectedCategoryId);
-  const setSelectedCategoryId = useStore((s) => s.setSelectedCategoryId);
 
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
@@ -45,21 +43,11 @@ export const CategoriesPage = () => {
     setDrawerType("category");
   };
 
-  const deleteCategory = async () => {
-    try {
-      await api.delete(`/categories/${selectedCategoryId}`);
-      setSelectedCategoryId(null);
-      getCategories();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const getCategories = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { data } = await api.get("/categories", { params });
+      const { data } = await api.get("/categories/back-office", { params });
 
       setItems(data.items);
       setTotalPages(data.totalPages);
@@ -108,17 +96,11 @@ export const CategoriesPage = () => {
         <CategoryForm onSuccess={getCategories} />
       </AppDrawer>
 
+      <CategoryPublishDialog onSuccess={getCategories} />
+
+      <DeleteCategoryDialog onSuccess={getCategories} />
+
       <UnsavedChangesDialog />
-      <ConfirmDialog
-        open={!!selectedCategoryId}
-        onOpenChange={() => setSelectedCategoryId(null)}
-        title="Delete Category"
-        text="Are you sure you want to delete this category?"
-        onCancel={() => setSelectedCategoryId(null)}
-        confirmBtnText="Delete"
-        confirmBtnVariant="critical"
-        onConfirm={deleteCategory}
-      />
     </div>
   );
 };

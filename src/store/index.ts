@@ -12,7 +12,7 @@ import {
   ProfileFormValues,
   UtilizedProductFormValues,
 } from "@forms";
-import { ISelectedPublishProduct } from "@types";
+import { ISelectedPublishItem } from "@types";
 import { create } from "zustand";
 
 export type DialogTypes =
@@ -78,12 +78,14 @@ interface IStoreState {
   setCategory: (value: CategoryFormValues) => void;
   selectedCategoryId: string | null;
   setSelectedCategoryId: (value: string | null) => void;
+  selectedPublishCategory: ISelectedPublishItem | null;
+  setSelectedPublishCategory: (value: ISelectedPublishItem | null) => void;
   product: ProductFormValues;
   setProduct: (value: ProductFormValues) => void;
   selectedProductId: string | null;
   setSelectedProductId: (value: string | null) => void;
-  selectedPublishProduct: ISelectedPublishProduct | null;
-  setSelectedPublishProduct: (value: ISelectedPublishProduct | null) => void;
+  selectedPublishProduct: ISelectedPublishItem | null;
+  setSelectedPublishProduct: (value: ISelectedPublishItem | null) => void;
   selectedUtilizedProduct: UtilizedProductFormValues | null;
   setSelectedUtilizedProduct: (value: UtilizedProductFormValues | null) => void;
   selectedUtilizedProductId: string | null;
@@ -133,6 +135,8 @@ export const useStore = create<IStoreState>((set) => ({
   setCategory: (category) => set({ category }),
   selectedCategoryId: null,
   setSelectedCategoryId: (selectedCategoryId) => set({ selectedCategoryId }),
+  selectedPublishCategory: null,
+  setSelectedPublishCategory: (selectedPublishCategory) => set({ selectedPublishCategory }),
   product: emptyProduct,
   setProduct: (product) => set({ product }),
   selectedProductId: null,
