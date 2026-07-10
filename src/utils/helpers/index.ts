@@ -134,8 +134,9 @@ export const calculateDiscountPercentage = (finalAmount: number, originalAmount:
   if (originalAmount === 0) return 0;
   if (finalAmount >= originalAmount) return 0;
 
-  const discount = ((originalAmount - finalAmount) / originalAmount) * 100;
-  return Math.round(discount * 100) / 100; // Round to 2 decimal places
+  return Number(
+    new Big(originalAmount).minus(finalAmount).div(originalAmount).times(100).round(6, Big.roundHalfUp).toString()
+  );
 };
 
 /**
@@ -145,4 +146,10 @@ export const calculateDiscountPercentage = (finalAmount: number, originalAmount:
  * @param discount - Discount percentage (e.g., 10 for 10%)
  */
 export const calculateDiscountedAmount = (price: number, quantity: number, discount: number): number =>
-  price * quantity * (1 - discount / 100);
+  Number(
+    new Big(price)
+      .times(quantity)
+      .times(new Big(1).minus(new Big(discount).div(100)))
+      .round(0, Big.roundHalfUp)
+      .toString()
+  );
