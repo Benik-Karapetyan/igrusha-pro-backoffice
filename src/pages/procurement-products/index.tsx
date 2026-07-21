@@ -127,7 +127,7 @@ export const ProcurementProductsPage = () => {
 
       <div className="px-4">
         <div className="flex items-center justify-end gap-3 border bg-white px-6 py-4">
-          <Typography variant="body-lg">Total Amount For Given Period:</Typography>
+          <Typography variant="body-lg">Total Amount For Given Products:</Typography>
           <Typography variant="body-lg" color="success">
             {formatCurrency(totalAmount, "USD", "en-US")}
           </Typography>
