@@ -8,6 +8,8 @@ export * from "./expense-form";
 export * from "./expense-form/expense-form.consts";
 export * from "./order-form";
 export * from "./order-form/order-form.consts";
+export * from "./procurement-product-form";
+export * from "./procurement-product-form/procurement-product-form.consts";
 export * from "./product-form";
 export * from "./product-form/product-form.consts";
 export * from "./profile-form";

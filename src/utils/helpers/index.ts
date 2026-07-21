@@ -119,17 +119,11 @@ export const formatCurrency = (value: number, currency: string = "AMD", locale: 
     style: "currency",
     currency,
     currencyDisplay: "narrowSymbol",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 };
 
-/**
- * Calculates the discount percentage based on original and final amounts
- * @param finalAmount - The final/discounted amount
- * @param originalAmount - The original amount before discount
- * @returns The discount percentage (e.g., 10 for 10% discount)
- */
 export const calculateDiscountPercentage = (finalAmount: number, originalAmount: number): number => {
   if (originalAmount === 0) return 0;
   if (finalAmount >= originalAmount) return 0;
@@ -139,12 +133,6 @@ export const calculateDiscountPercentage = (finalAmount: number, originalAmount:
   );
 };
 
-/**
- * Calculates the line total after applying a percentage discount
- * @param price - Unit price
- * @param quantity - Item quantity
- * @param discount - Discount percentage (e.g., 10 for 10%)
- */
 export const calculateDiscountedAmount = (price: number, quantity: number, discount: number): number =>
   Number(
     new Big(price)

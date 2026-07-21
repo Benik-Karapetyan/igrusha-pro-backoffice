@@ -4,6 +4,7 @@ export * from "./check-email";
 export * from "./expenses";
 export * from "./main";
 export * from "./orders";
+export * from "./procurement-products";
 export * from "./products";
 export * from "./profile";
 export * from "./recover-password";

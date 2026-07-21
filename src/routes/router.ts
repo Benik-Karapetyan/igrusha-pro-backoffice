@@ -8,6 +8,7 @@ import { checkEmailRoute } from "./check-email";
 import { expensesRoute } from "./expenses";
 import { mainRoute } from "./main";
 import { ordersRoute } from "./orders";
+import { procurementProductsRoute } from "./procurement-products";
 import { productsRoute } from "./products";
 import { profileRoute } from "./profile";
 import { recoverPasswordRoute } from "./recover-password";
@@ -28,6 +29,7 @@ const routeTree = rootRoute.addChildren([
     utilizedProductsRoute,
     ordersRoute,
     expensesRoute,
+    procurementProductsRoute,
   ]),
   signInRoute,
   recoverPasswordRoute,

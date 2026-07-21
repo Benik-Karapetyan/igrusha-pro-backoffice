@@ -10,6 +10,7 @@ import {
   EntryFormValues,
   ExpenseFormValues,
   OrderFormValues,
+  ProcurementProductFormValues,
   ProductFormValues,
   ProfileFormValues,
   UtilizedProductFormValues,
@@ -116,6 +117,10 @@ interface IStoreState {
   setSelectedCompleteOrderId: (value: string | null) => void;
   selectedConfirmReturnOrderId: string | null;
   setSelectedConfirmReturnOrderId: (value: string | null) => void;
+  procurementProduct: ProcurementProductFormValues | null;
+  setProcurementProduct: (value: ProcurementProductFormValues | null) => void;
+  selectedProcurementProductId: string | null;
+  setSelectedProcurementProductId: (value: string | null) => void;
 }
 
 export const useStore = create<IStoreState>((set) => ({
@@ -179,4 +184,8 @@ export const useStore = create<IStoreState>((set) => ({
   setSelectedCompleteOrderId: (selectedCompleteOrderId) => set({ selectedCompleteOrderId }),
   selectedConfirmReturnOrderId: null,
   setSelectedConfirmReturnOrderId: (selectedConfirmReturnOrderId) => set({ selectedConfirmReturnOrderId }),
+  procurementProduct: null,
+  setProcurementProduct: (procurementProduct) => set({ procurementProduct: procurementProduct || null }),
+  selectedProcurementProductId: null,
+  setSelectedProcurementProductId: (selectedProcurementProductId) => set({ selectedProcurementProductId }),
 }));

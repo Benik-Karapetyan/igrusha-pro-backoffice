@@ -12,6 +12,7 @@ export * from "./unsaved-changes-dialog";
 export * from "./filters-dialog";
 export * from "./create-update-dialog";
 export * from "./phone-input";
+export * from "./procurement-products";
 export * from "./user-profile";
 export * from "./copy-to-clipboard";
 export * from "./range-picker-dialog";

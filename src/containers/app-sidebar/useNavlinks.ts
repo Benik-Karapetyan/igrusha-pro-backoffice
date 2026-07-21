@@ -4,6 +4,7 @@ import {
   mdiAccountBoxOutline,
   mdiArchiveOutline,
   mdiFileDocumentMinusOutline,
+  mdiImport,
   mdiPackageVariantClosed,
   mdiPackageVariantClosedMinus,
   mdiShapeOutline,
@@ -63,6 +64,12 @@ export const useNavlinks = () => {
         title: "Expenses",
         url: "/expenses",
         icon: mdiFileDocumentMinusOutline,
+      },
+      {
+        group: false,
+        title: "Procurement Products",
+        url: "/procurement-products",
+        icon: mdiImport,
       },
     ];
 
