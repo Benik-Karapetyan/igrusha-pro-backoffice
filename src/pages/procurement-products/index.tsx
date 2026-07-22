@@ -30,7 +30,15 @@ export const ProcurementProductsPage = () => {
     [page, pageSize]
   );
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<{ price?: number; quantity?: number; deliveryInsideCost?: number }[]>([]);
+  const [items, setItems] = useState<
+    {
+      price?: number;
+      quantity?: number;
+      deliveryInsideCost?: number;
+      cartonQuantity?: number;
+      cartonWeight?: number;
+    }[]
+  >([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const totalAmount = useMemo(
@@ -41,6 +49,19 @@ export const ProcurementProductsPage = () => {
         const deliveryInsideCost = typeof item.deliveryInsideCost === "number" ? item.deliveryInsideCost : 0;
 
         return sum + price * quantity + deliveryInsideCost;
+      }, 0),
+    [items]
+  );
+  const totalWeight = useMemo(
+    () =>
+      items.reduce((sum, item) => {
+        const quantity = typeof item.quantity === "number" ? item.quantity : 0;
+        const cartonQuantity = typeof item.cartonQuantity === "number" ? item.cartonQuantity : 0;
+        const cartonWeight = typeof item.cartonWeight === "number" ? item.cartonWeight : 0;
+
+        if (!cartonQuantity) return sum;
+
+        return sum + (quantity / cartonQuantity) * cartonWeight;
       }, 0),
     [items]
   );
@@ -89,8 +110,6 @@ export const ProcurementProductsPage = () => {
     void getProcurementProducts();
   }, [getProcurementProducts]);
 
-  console.log(items);
-
   return (
     <div>
       <AppHeader
@@ -136,6 +155,13 @@ export const ProcurementProductsPage = () => {
 
           <Typography variant="body-lg" color="success">
             {formatCurrency(totalAmount * amdRate, "AMD", "hy-AM")}
+          </Typography>
+
+          <div className="h-4 w-0.5 bg-black" />
+
+          <Typography variant="body-lg">Total Weight:</Typography>
+          <Typography variant="body-lg" color="success">
+            {totalWeight} kg
           </Typography>
         </div>
       </div>
