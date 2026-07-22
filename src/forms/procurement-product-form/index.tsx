@@ -191,7 +191,7 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
           )}
         </Field>
 
-        <div className="w-[calc(100%_/_3_-_0.68rem)]">
+        <div>
           <Field name="url">
             {({ name, state: { value, meta }, handleChange }) => (
               <TextField
@@ -346,6 +346,23 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
           </div>
 
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="deliveryInsideDuration">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Delivery Inside Duration"
+                  placeholder="Enter delivery inside duration"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="brand">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
@@ -359,10 +376,8 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
               )}
             </Field>
           </div>
-        </div>
 
-        <div className="flex gap-4">
-          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+          <div className="w-[calc(100%_/_3_*_2)]">
             <Field name="seller">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField

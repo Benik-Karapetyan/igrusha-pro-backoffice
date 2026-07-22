@@ -16,6 +16,7 @@ export const ProcurementProductFormSchema = z.object({
     .optional(),
   quantity: z.number().positive("Quantity must be greater than 0").or(z.literal("")),
   deliveryInsideCost: z.number().positive("Delivery inside cost must be greater than 0").or(z.literal("")),
+  deliveryInsideDuration: z.string().optional(),
   brand: z.string().optional(),
   seller: z.string().optional(),
 });
@@ -35,6 +36,7 @@ export const emptyProcurementProduct: ProcurementProductFormValues = {
   },
   quantity: "",
   deliveryInsideCost: "",
+  deliveryInsideDuration: "",
   brand: "",
   seller: "",
 };

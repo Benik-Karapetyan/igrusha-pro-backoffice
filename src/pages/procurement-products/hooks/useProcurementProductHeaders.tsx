@@ -73,6 +73,10 @@ export const useProcurementProductHeaders = (amdRate: number) => {
       value: "deliveryInsideCost",
     },
     {
+      text: "delivery inside duration",
+      value: "deliveryInsideDuration",
+    },
+    {
       text: "brand",
       value: "brand",
     },
