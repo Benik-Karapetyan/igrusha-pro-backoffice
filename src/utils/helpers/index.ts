@@ -151,8 +151,5 @@ export const calculateVolumetricWeight = (
 ): number => {
   if (!cartonQuantity) return 0;
 
-  const volume = length * width * height;
-  if (volume <= 150) return 0;
-
-  return (quantity / cartonQuantity) * (volume / 5000);
+  return (quantity / cartonQuantity) * ((length * width * height) / 5000);
 };
