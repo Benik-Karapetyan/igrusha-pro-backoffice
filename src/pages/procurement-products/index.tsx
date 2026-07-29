@@ -161,7 +161,7 @@ export const ProcurementProductsPage = () => {
 
           <Typography variant="body-lg">Total Weight:</Typography>
           <Typography variant="body-lg" color="success">
-            {totalWeight} kg
+            {totalWeight.toFixed(2)} kg
           </Typography>
         </div>
       </div>
