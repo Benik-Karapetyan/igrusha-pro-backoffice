@@ -141,3 +141,18 @@ export const calculateDiscountedAmount = (price: number, quantity: number, disco
       .round(0, Big.roundHalfUp)
       .toString()
   );
+
+export const calculateVolumetricWeight = (
+  length: number,
+  width: number,
+  height: number,
+  quantity: number,
+  cartonQuantity: number
+): number => {
+  if (!cartonQuantity) return 0;
+
+  const volume = length * width * height;
+  if (volume <= 150) return 0;
+
+  return (quantity / cartonQuantity) * (volume / 5000);
+};

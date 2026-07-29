@@ -2,7 +2,7 @@ import { ProcurementProductFormValues } from "@forms";
 import { mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
 import { Button, HeaderItem, Icon, TableItem } from "@ui-kit";
-import { deleteIcon, editIcon, formatCurrency } from "@utils";
+import { calculateVolumetricWeight, deleteIcon, editIcon, formatCurrency } from "@utils";
 import { format } from "date-fns";
 
 export const useProcurementProductHeaders = (amdRate: number) => {
@@ -109,6 +109,29 @@ export const useProcurementProductHeaders = (amdRate: number) => {
         typeof item.cartonQuantity === "number" &&
         typeof item.cartonWeight === "number" ? (
           <div>{(item.quantity / item.cartonQuantity) * item.cartonWeight} kg</div>
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
+      text: "total volumetric weight",
+      value: (item) =>
+        typeof item.quantity === "number" &&
+        typeof item.cartonQuantity === "number" &&
+        typeof item.cartonSize === "object" &&
+        typeof item.cartonSize.length === "number" &&
+        typeof item.cartonSize.width === "number" &&
+        typeof item.cartonSize.height === "number" ? (
+          <div>
+            {calculateVolumetricWeight(
+              item.cartonSize.length,
+              item.cartonSize.width,
+              item.cartonSize.height,
+              item.quantity,
+              item.cartonQuantity
+            ).toFixed(2)}{" "}
+            kg
+          </div>
         ) : (
           <Icon name={mdiMinus} dense />
         ),

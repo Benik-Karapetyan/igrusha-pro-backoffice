@@ -11,7 +11,7 @@ import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Button, DataTable, TableFooter, TextField, Typography } from "@ui-kit";
-import { formatCurrency } from "@utils";
+import { calculateVolumetricWeight, formatCurrency } from "@utils";
 
 import { ProcurementProductForm } from "../../forms/procurement-product-form";
 import { emptyProcurementProduct } from "../../forms/procurement-product-form/procurement-product-form.consts";
@@ -37,6 +37,7 @@ export const ProcurementProductsPage = () => {
       deliveryInsideCost?: number;
       cartonQuantity?: number;
       cartonWeight?: number;
+      cartonSize?: { length?: number; width?: number; height?: number };
     }[]
   >([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -62,6 +63,19 @@ export const ProcurementProductsPage = () => {
         if (!cartonQuantity) return sum;
 
         return sum + (quantity / cartonQuantity) * cartonWeight;
+      }, 0),
+    [items]
+  );
+  const totalVolumetricWeight = useMemo(
+    () =>
+      items.reduce((sum, item) => {
+        const quantity = typeof item.quantity === "number" ? item.quantity : 0;
+        const cartonQuantity = typeof item.cartonQuantity === "number" ? item.cartonQuantity : 0;
+        const length = typeof item.cartonSize?.length === "number" ? item.cartonSize.length : 0;
+        const width = typeof item.cartonSize?.width === "number" ? item.cartonSize.width : 0;
+        const height = typeof item.cartonSize?.height === "number" ? item.cartonSize.height : 0;
+
+        return sum + calculateVolumetricWeight(length, width, height, quantity, cartonQuantity);
       }, 0),
     [items]
   );
@@ -162,6 +176,13 @@ export const ProcurementProductsPage = () => {
           <Typography variant="body-lg">Total Weight:</Typography>
           <Typography variant="body-lg" color="success">
             {totalWeight.toFixed(2)} kg
+          </Typography>
+
+          <div className="h-4 w-0.5 bg-black" />
+
+          <Typography variant="body-lg">Total Volumetric Weight:</Typography>
+          <Typography variant="body-lg" color="success">
+            {totalVolumetricWeight.toFixed(2)} kg
           </Typography>
         </div>
       </div>
