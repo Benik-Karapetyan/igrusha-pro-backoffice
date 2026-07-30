@@ -4,6 +4,7 @@ import {
   AppDrawer,
   AppHeader,
   DeleteProcurementProductDialog,
+  ProcurementProductIsOrderedDialog,
   TableContainer,
   UnsavedChangesDialog,
 } from "@containers";
@@ -192,6 +193,8 @@ export const ProcurementProductsPage = () => {
       </AppDrawer>
 
       <UnsavedChangesDialog />
+
+      <ProcurementProductIsOrderedDialog onSuccess={getProcurementProducts} />
 
       <DeleteProcurementProductDialog onSuccess={getProcurementProducts} />
     </div>

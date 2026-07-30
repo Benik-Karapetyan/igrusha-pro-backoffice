@@ -15,7 +15,7 @@ import {
   ProfileFormValues,
   UtilizedProductFormValues,
 } from "@forms";
-import { ISelectedPublishItem } from "@types";
+import { ISelectedIsOrderedProcurementProduct, ISelectedPublishItem } from "@types";
 import { create } from "zustand";
 
 export type DialogTypes =
@@ -119,6 +119,8 @@ interface IStoreState {
   setSelectedConfirmReturnOrderId: (value: string | null) => void;
   procurementProduct: ProcurementProductFormValues | null;
   setProcurementProduct: (value: ProcurementProductFormValues | null) => void;
+  selectedProcurementProduct: ISelectedIsOrderedProcurementProduct | null;
+  setSelectedProcurementProduct: (value: ISelectedIsOrderedProcurementProduct | null) => void;
   selectedProcurementProductId: string | null;
   setSelectedProcurementProductId: (value: string | null) => void;
 }
@@ -186,6 +188,8 @@ export const useStore = create<IStoreState>((set) => ({
   setSelectedConfirmReturnOrderId: (selectedConfirmReturnOrderId) => set({ selectedConfirmReturnOrderId }),
   procurementProduct: null,
   setProcurementProduct: (procurementProduct) => set({ procurementProduct: procurementProduct || null }),
+  selectedProcurementProduct: null,
+  setSelectedProcurementProduct: (selectedProcurementProduct) => set({ selectedProcurementProduct }),
   selectedProcurementProductId: null,
   setSelectedProcurementProductId: (selectedProcurementProductId) => set({ selectedProcurementProductId }),
 }));

@@ -363,6 +363,22 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
 
         <div className="flex gap-4">
           <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="paymentFee">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Payment Fee"
+                  placeholder="Enter payment fee"
+                  type="number"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={({ target: { value } }) => handleChange(value ? +value : "")}
+                />
+              )}
+            </Field>
+          </div>
+
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="brand">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
@@ -377,7 +393,7 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
             </Field>
           </div>
 
-          <div className="w-[calc(100%_/_3_*_2)]">
+          <div className="w-[calc(100%_/_3_*_0.68.rem)]">
             <Field name="seller">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField

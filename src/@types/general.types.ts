@@ -16,3 +16,8 @@ export interface ISelectedPublishItem {
   _id: string;
   isPublished: boolean;
 }
+
+export interface ISelectedIsOrderedProcurementProduct {
+  _id: string;
+  isOrdered: boolean;
+}

@@ -1,3 +1,4 @@
+import { TableSwitchCell } from "@containers";
 import { ProcurementProductFormValues } from "@forms";
 import { mdiMinus } from "@mdi/js";
 import { useStore } from "@store";
@@ -7,7 +8,15 @@ import { format } from "date-fns";
 
 export const useProcurementProductHeaders = (amdRate: number) => {
   const setProcurementProduct = useStore((s) => s.setProcurementProduct);
+  const setSelectedProcurementProduct = useStore((s) => s.setSelectedProcurementProduct);
   const setSelectedProcurementProductId = useStore((s) => s.setSelectedProcurementProductId);
+
+  const handleIsOrderedClick = (item: TableItem) => {
+    setSelectedProcurementProduct({
+      _id: item._id as string,
+      isOrdered: item.isOrdered as boolean,
+    });
+  };
 
   const handleEdit = (item: TableItem) => {
     setProcurementProduct(item as unknown as ProcurementProductFormValues);
@@ -77,6 +86,18 @@ export const useProcurementProductHeaders = (amdRate: number) => {
       value: "deliveryInsideDuration",
     },
     {
+      text: "payment fee",
+      value: (item) =>
+        typeof item.paymentFee === "number" ? (
+          <div className="flex flex-col gap-1">
+            <div>{formatCurrency(item.paymentFee, "USD", "en-US")}</div>
+            <div>{formatCurrency(item.paymentFee * amdRate)}</div>
+          </div>
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
       text: "brand",
       value: "brand",
     },
@@ -141,6 +162,15 @@ export const useProcurementProductHeaders = (amdRate: number) => {
       value: (item) =>
         typeof item.createdAt === "string" ? (
           format(new Date(item.createdAt), "dd.MM.yyyy")
+        ) : (
+          <Icon name={mdiMinus} dense />
+        ),
+    },
+    {
+      text: "is ordered",
+      value: (item) =>
+        typeof item.isOrdered === "boolean" || typeof item.isOrdered === "undefined" ? (
+          <TableSwitchCell checked={!!item.isOrdered} onClick={() => handleIsOrderedClick(item)} />
         ) : (
           <Icon name={mdiMinus} dense />
         ),

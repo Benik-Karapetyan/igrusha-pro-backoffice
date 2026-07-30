@@ -17,8 +17,10 @@ export const ProcurementProductFormSchema = z.object({
   quantity: z.number().positive("Quantity must be greater than 0").or(z.literal("")),
   deliveryInsideCost: z.number().positive("Delivery inside cost must be greater than 0").or(z.literal("")),
   deliveryInsideDuration: z.string().optional(),
+  paymentFee: z.number().positive("Payment fee must be greater than 0").or(z.literal("")),
   brand: z.string().optional(),
   seller: z.string().optional(),
+  isOrdered: z.boolean().optional(),
 });
 
 export type ProcurementProductFormValues = z.infer<typeof ProcurementProductFormSchema>;
@@ -37,6 +39,7 @@ export const emptyProcurementProduct: ProcurementProductFormValues = {
   quantity: "",
   deliveryInsideCost: "",
   deliveryInsideDuration: "",
+  paymentFee: "",
   brand: "",
   seller: "",
 };
