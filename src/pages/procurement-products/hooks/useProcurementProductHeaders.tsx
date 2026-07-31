@@ -113,15 +113,29 @@ export const useProcurementProductHeaders = (amdRate: number) => {
     },
     {
       text: "total cost",
-      value: (item) =>
-        typeof item.price === "number" && typeof item.quantity === "number" ? (
+      value: (item) => {
+        if (typeof item.price !== "number" || typeof item.quantity !== "number") {
+          return <Icon name={mdiMinus} dense />;
+        }
+
+        const products = item.price * item.quantity;
+        const delivery = typeof item.deliveryInsideCost === "number" ? item.deliveryInsideCost : 0;
+        const paymentFee = typeof item.paymentFee === "number" ? item.paymentFee : 0;
+        const total = products + delivery + paymentFee;
+
+        return (
           <div className="flex flex-col gap-1">
-            <div>{formatCurrency(item.price * item.quantity, "USD", "en-US")}</div>
-            <div>{formatCurrency(item.price * item.quantity * amdRate)}</div>
+            <div>
+              {formatCurrency(total, "USD", "en-US")} ({formatCurrency(products, "USD", "en-US")} /{" "}
+              {formatCurrency(delivery, "USD", "en-US")} / {formatCurrency(paymentFee, "USD", "en-US")})
+            </div>
+            <div>
+              {formatCurrency(total * amdRate)} ({formatCurrency(products * amdRate)} /{" "}
+              {formatCurrency(delivery * amdRate)} / {formatCurrency(paymentFee * amdRate)})
+            </div>
           </div>
-        ) : (
-          <Icon name={mdiMinus} dense />
-        ),
+        );
+      },
     },
     {
       text: "total weight",
@@ -139,6 +153,7 @@ export const useProcurementProductHeaders = (amdRate: number) => {
       value: (item) =>
         typeof item.quantity === "number" &&
         typeof item.cartonQuantity === "number" &&
+        typeof item.cartonWeight === "number" &&
         typeof item.cartonSize === "object" &&
         typeof item.cartonSize.length === "number" &&
         typeof item.cartonSize.width === "number" &&
@@ -149,7 +164,8 @@ export const useProcurementProductHeaders = (amdRate: number) => {
               item.cartonSize.width,
               item.cartonSize.height,
               item.quantity,
-              item.cartonQuantity
+              item.cartonQuantity,
+              item.cartonWeight
             ).toFixed(2)}{" "}
             kg
           </div>

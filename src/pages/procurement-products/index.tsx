@@ -21,7 +21,7 @@ import { useProcurementProductHeaders } from "./hooks/useProcurementProductHeade
 export const ProcurementProductsPage = () => {
   const navigate = useNavigate();
   const { page, pageSize } = useSearch({ from: "/auth/procurement-products" });
-  const [amdRate, setAmdRate] = useState(370);
+  const [amdRate, setAmdRate] = useState(369);
   const { headers } = useProcurementProductHeaders(amdRate);
   const params = useMemo(
     () => ({
@@ -36,6 +36,7 @@ export const ProcurementProductsPage = () => {
       price?: number;
       quantity?: number;
       deliveryInsideCost?: number;
+      paymentFee?: number;
       cartonQuantity?: number;
       cartonWeight?: number;
       cartonSize?: { length?: number; width?: number; height?: number };
@@ -43,17 +44,27 @@ export const ProcurementProductsPage = () => {
   >([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
-  const totalAmount = useMemo(
-    () =>
-      items.reduce((sum, item) => {
+  const { totalAmount, productsAmount, deliveryAmount, paymentFeeAmount } = useMemo(() => {
+    return items.reduce(
+      (acc, item) => {
         const price = typeof item.price === "number" ? item.price : 0;
         const quantity = typeof item.quantity === "number" ? item.quantity : 0;
         const deliveryInsideCost = typeof item.deliveryInsideCost === "number" ? item.deliveryInsideCost : 0;
+        const paymentFee = typeof item.paymentFee === "number" ? item.paymentFee : 0;
+        const products = price * quantity;
 
-        return sum + price * quantity + deliveryInsideCost;
-      }, 0),
-    [items]
-  );
+        return {
+          productsAmount: acc.productsAmount + products,
+          deliveryAmount: acc.deliveryAmount + deliveryInsideCost,
+          paymentFeeAmount: acc.paymentFeeAmount + paymentFee,
+          totalAmount: acc.totalAmount + products + deliveryInsideCost + paymentFee,
+        };
+      },
+      { productsAmount: 0, deliveryAmount: 0, paymentFeeAmount: 0, totalAmount: 0 }
+    );
+  }, [items]);
+  const amountBreakdown = `(${formatCurrency(productsAmount, "USD", "en-US")} / ${formatCurrency(deliveryAmount, "USD", "en-US")} / ${formatCurrency(paymentFeeAmount, "USD", "en-US")})`;
+  const amountBreakdownAmd = `(${formatCurrency(productsAmount * amdRate)} / ${formatCurrency(deliveryAmount * amdRate)} / ${formatCurrency(paymentFeeAmount * amdRate)})`;
   const totalWeight = useMemo(
     () =>
       items.reduce((sum, item) => {
@@ -72,11 +83,12 @@ export const ProcurementProductsPage = () => {
       items.reduce((sum, item) => {
         const quantity = typeof item.quantity === "number" ? item.quantity : 0;
         const cartonQuantity = typeof item.cartonQuantity === "number" ? item.cartonQuantity : 0;
+        const cartonWeight = typeof item.cartonWeight === "number" ? item.cartonWeight : 0;
         const length = typeof item.cartonSize?.length === "number" ? item.cartonSize.length : 0;
         const width = typeof item.cartonSize?.width === "number" ? item.cartonSize.width : 0;
         const height = typeof item.cartonSize?.height === "number" ? item.cartonSize.height : 0;
 
-        return sum + calculateVolumetricWeight(length, width, height, quantity, cartonQuantity);
+        return sum + calculateVolumetricWeight(length, width, height, quantity, cartonQuantity, cartonWeight);
       }, 0),
     [items]
   );
@@ -163,13 +175,13 @@ export const ProcurementProductsPage = () => {
         <div className="flex items-center justify-end gap-3 border bg-white px-6 py-4">
           <Typography variant="body-lg">Total Amount For Given Products:</Typography>
           <Typography variant="body-lg" color="success">
-            {formatCurrency(totalAmount, "USD", "en-US")}
+            {formatCurrency(totalAmount, "USD", "en-US")} {amountBreakdown}
           </Typography>
 
           <div className="h-4 w-0.5 bg-black" />
 
           <Typography variant="body-lg" color="success">
-            {formatCurrency(totalAmount * amdRate, "AMD", "hy-AM")}
+            {formatCurrency(totalAmount * amdRate, "AMD", "hy-AM")} {amountBreakdownAmd}
           </Typography>
 
           <div className="h-4 w-0.5 bg-black" />

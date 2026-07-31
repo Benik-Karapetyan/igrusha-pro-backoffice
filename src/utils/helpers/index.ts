@@ -147,9 +147,13 @@ export const calculateVolumetricWeight = (
   width: number,
   height: number,
   quantity: number,
-  cartonQuantity: number
+  cartonQuantity: number,
+  cartonWeight: number
 ): number => {
   if (!cartonQuantity) return 0;
 
-  return (quantity / cartonQuantity) * ((length * width * height) / 5000);
+  const actualWeight = (quantity / cartonQuantity) * cartonWeight;
+  const volumetricWeight = (quantity / cartonQuantity) * ((length * width * height) / 5000);
+
+  return Math.max(actualWeight, volumetricWeight);
 };
