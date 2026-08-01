@@ -19,7 +19,10 @@ export const useProcurementProductHeaders = (amdRate: number) => {
   };
 
   const handleEdit = (item: TableItem) => {
-    setProcurementProduct(item as unknown as ProcurementProductFormValues);
+    setProcurementProduct({
+      ...item,
+      paymentFee: typeof item.paymentFee === "number" ? item.paymentFee : "",
+    } as unknown as ProcurementProductFormValues);
   };
 
   const handleDelete = (item: TableItem) => {

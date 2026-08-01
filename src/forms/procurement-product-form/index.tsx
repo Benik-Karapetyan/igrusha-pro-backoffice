@@ -91,8 +91,9 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
       }
 
       await api.post("/procurement-products", {
-        ...requestData,
+        ...omit(requestData, "paymentFee"),
         image,
+        ...(typeof requestData.paymentFee === "number" ? { paymentFee: requestData.paymentFee } : {}),
       });
 
       setProcurementProduct(null);
@@ -124,7 +125,11 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
         image = `uploads/${requestData.image.split("/").pop()}`;
       }
 
-      await api.put(`/procurement-products/${defaultValues?._id}`, { ...omit(requestData, "_id"), image });
+      await api.put(`/procurement-products/${defaultValues?._id}`, {
+        ...omit(requestData, "_id", "paymentFee"),
+        image,
+        ...(typeof requestData.paymentFee === "number" ? { paymentFee: requestData.paymentFee } : {}),
+      });
 
       setProcurementProduct(null);
       toast.success(`Procurement product has been successfully updated!`);
@@ -369,6 +374,7 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
                   label="Payment Fee"
                   placeholder="Enter payment fee"
                   type="number"
+                  step="any"
                   name={name}
                   value={value}
                   errorMessage={meta.errors[0] || ""}

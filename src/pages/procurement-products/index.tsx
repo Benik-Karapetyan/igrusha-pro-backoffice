@@ -11,7 +11,7 @@ import {
 import { api } from "@services";
 import { useStore } from "@store";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { Button, DataTable, TableFooter, TextField, Typography } from "@ui-kit";
+import { Button, Checkbox, DataTable, TableFooter, TextField, Typography } from "@ui-kit";
 import { calculateVolumetricWeight, formatCurrency } from "@utils";
 
 import { ProcurementProductForm } from "../../forms/procurement-product-form";
@@ -40,12 +40,18 @@ export const ProcurementProductsPage = () => {
       cartonQuantity?: number;
       cartonWeight?: number;
       cartonSize?: { length?: number; width?: number; height?: number };
+      isOrdered?: boolean;
     }[]
   >([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [showOnlyOrderedProducts, setShowOnlyOrderedProducts] = useState(false);
+  const itemsForTotals = useMemo(
+    () => (showOnlyOrderedProducts ? items.filter((item) => !!item.isOrdered) : items),
+    [items, showOnlyOrderedProducts]
+  );
   const { totalAmount, productsAmount, deliveryAmount, paymentFeeAmount } = useMemo(() => {
-    return items.reduce(
+    return itemsForTotals.reduce(
       (acc, item) => {
         const price = typeof item.price === "number" ? item.price : 0;
         const quantity = typeof item.quantity === "number" ? item.quantity : 0;
@@ -62,12 +68,12 @@ export const ProcurementProductsPage = () => {
       },
       { productsAmount: 0, deliveryAmount: 0, paymentFeeAmount: 0, totalAmount: 0 }
     );
-  }, [items]);
+  }, [itemsForTotals]);
   const amountBreakdown = `(${formatCurrency(productsAmount, "USD", "en-US")} / ${formatCurrency(deliveryAmount, "USD", "en-US")} / ${formatCurrency(paymentFeeAmount, "USD", "en-US")})`;
   const amountBreakdownAmd = `(${formatCurrency(productsAmount * amdRate)} / ${formatCurrency(deliveryAmount * amdRate)} / ${formatCurrency(paymentFeeAmount * amdRate)})`;
   const totalWeight = useMemo(
     () =>
-      items.reduce((sum, item) => {
+      itemsForTotals.reduce((sum, item) => {
         const quantity = typeof item.quantity === "number" ? item.quantity : 0;
         const cartonQuantity = typeof item.cartonQuantity === "number" ? item.cartonQuantity : 0;
         const cartonWeight = typeof item.cartonWeight === "number" ? item.cartonWeight : 0;
@@ -76,11 +82,11 @@ export const ProcurementProductsPage = () => {
 
         return sum + (quantity / cartonQuantity) * cartonWeight;
       }, 0),
-    [items]
+    [itemsForTotals]
   );
   const totalVolumetricWeight = useMemo(
     () =>
-      items.reduce((sum, item) => {
+      itemsForTotals.reduce((sum, item) => {
         const quantity = typeof item.quantity === "number" ? item.quantity : 0;
         const cartonQuantity = typeof item.cartonQuantity === "number" ? item.cartonQuantity : 0;
         const cartonWeight = typeof item.cartonWeight === "number" ? item.cartonWeight : 0;
@@ -90,7 +96,7 @@ export const ProcurementProductsPage = () => {
 
         return sum + calculateVolumetricWeight(length, width, height, quantity, cartonQuantity, cartonWeight);
       }, 0),
-    [items]
+    [itemsForTotals]
   );
   const procurementProduct = useStore((s) => s.procurementProduct);
   const setProcurementProduct = useStore((s) => s.setProcurementProduct);
@@ -144,18 +150,24 @@ export const ProcurementProductsPage = () => {
         MainButton={<Button onClick={handleAddClick}>Add Procurement Product</Button>}
       />
 
-      <div className="flex p-4 pb-0">
+      <div className="flex gap-3 p-4 pb-0">
         <TextField
           placeholder="Enter AMD rate"
           type="number"
           value={amdRate}
           onChange={(e) => setAmdRate(+e.target.value)}
         />
+
+        <Checkbox
+          label="Show only ordered products"
+          checked={showOnlyOrderedProducts}
+          onCheckedChange={(checked) => setShowOnlyOrderedProducts(!!checked)}
+        />
       </div>
 
-      <TableContainer itemsLength={items.length}>
+      <TableContainer itemsLength={itemsForTotals.length}>
         <div className="overflow-auto">
-          <DataTable headers={headers} items={items} loading={loading} hideFooter />
+          <DataTable headers={headers} items={itemsForTotals} loading={loading} hideFooter />
         </div>
 
         <table className="w-full">
