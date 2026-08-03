@@ -91,9 +91,10 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
       }
 
       await api.post("/procurement-products", {
-        ...omit(requestData, "paymentFee"),
+        ...omit(requestData, "paymentFee", "trackingNumber"),
         image,
         ...(typeof requestData.paymentFee === "number" ? { paymentFee: requestData.paymentFee } : {}),
+        ...(typeof requestData.trackingNumber === "string" ? { trackingNumber: requestData.trackingNumber } : {}),
       });
 
       setProcurementProduct(null);
@@ -126,9 +127,10 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
       }
 
       await api.put(`/procurement-products/${defaultValues?._id}`, {
-        ...omit(requestData, "_id", "paymentFee"),
+        ...omit(requestData, "_id", "paymentFee", "trackingNumber"),
         image,
         ...(typeof requestData.paymentFee === "number" ? { paymentFee: requestData.paymentFee } : {}),
+        ...(typeof requestData.trackingNumber === "string" ? { trackingNumber: requestData.trackingNumber } : {}),
       });
 
       setProcurementProduct(null);
@@ -399,12 +401,29 @@ export const ProcurementProductForm: FC<ProcurementProductFormProps> = ({ onSucc
             </Field>
           </div>
 
-          <div className="w-[calc(100%_/_3_*_0.68.rem)]">
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
             <Field name="seller">
               {({ name, state: { value, meta }, handleChange }) => (
                 <TextField
                   label="Seller"
                   placeholder="Enter seller name"
+                  name={name}
+                  value={value}
+                  errorMessage={meta.errors[0] || ""}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <div className="w-[calc(100%_/_3_-_0.68rem)]">
+            <Field name="trackingNumber">
+              {({ name, state: { value, meta }, handleChange }) => (
+                <TextField
+                  label="Tracking Number"
+                  placeholder="Enter tracking number"
                   name={name}
                   value={value}
                   errorMessage={meta.errors[0] || ""}

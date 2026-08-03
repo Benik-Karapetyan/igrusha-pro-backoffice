@@ -195,6 +195,10 @@ export const useProcurementProductHeaders = (amdRate: number) => {
         ),
     },
     {
+      text: "tracking number",
+      value: "trackingNumber",
+    },
+    {
       text: "",
       value: (item) => (
         <div className="flex justify-end gap-3 p-1">

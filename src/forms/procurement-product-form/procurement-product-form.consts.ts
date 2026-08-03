@@ -21,6 +21,7 @@ export const ProcurementProductFormSchema = z.object({
   brand: z.string().optional(),
   seller: z.string().optional(),
   isOrdered: z.boolean().optional(),
+  trackingNumber: z.string().optional(),
 });
 
 export type ProcurementProductFormValues = z.infer<typeof ProcurementProductFormSchema>;
@@ -42,4 +43,6 @@ export const emptyProcurementProduct: ProcurementProductFormValues = {
   paymentFee: "",
   brand: "",
   seller: "",
+  isOrdered: false,
+  trackingNumber: "",
 };
